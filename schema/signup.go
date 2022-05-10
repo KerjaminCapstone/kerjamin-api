@@ -1,0 +1,13 @@
+package schema
+
+type SignUp struct {
+	Nik          string `json:"nik" validate:"required"`
+	Nama         string `json:"nama" validate:"required"`
+	Alamat       string `json:"alamat" validate:"required"`
+	JenisKelamin string `json:"jenis_kelamin" validate:"required"`
+	TanggalLahir string `json:"tanggal_lahir" validate:"required"`
+	NoTelepon    string `json:"nomor_telepon" validate:"required"`
+	Email        string `json:"email" validate:"required"`
+	Password     string `json:"password" validate:"required"`
+	Role         string `json:"role" validate:"required"`
+}
