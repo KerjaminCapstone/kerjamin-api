@@ -1,9 +1,7 @@
 package static
 
 type ResponseSuccess struct {
-	Status int
-	Error  bool
-	Data   string
+	Data interface{} `json:"data"`
 }
 
 type ResponseFail struct {

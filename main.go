@@ -41,6 +41,7 @@ func main() {
 				break
 			}
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			fmt.Println(c)
 			report = echo.NewHTTPError(http.StatusNotFound, "Data tidak ditemukan")
 		}
 
