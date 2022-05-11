@@ -2,6 +2,7 @@ package schema
 
 type SignUp struct {
 	Nik          string `json:"nik" validate:"required"`
+	Username     string `json:"username" validate:"required"`
 	Nama         string `json:"nama" validate:"required"`
 	Alamat       string `json:"alamat" validate:"required"`
 	JenisKelamin string `json:"jenis_kelamin" validate:"required"`

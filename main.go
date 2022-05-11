@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -38,6 +40,8 @@ func main() {
 
 				break
 			}
+		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			report = echo.NewHTTPError(http.StatusNotFound, "Data tidak ditemukan")
 		}
 
 		c.Logger().Error(report)

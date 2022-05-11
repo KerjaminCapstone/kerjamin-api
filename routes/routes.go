@@ -2,6 +2,7 @@ package routes
 
 import (
 	authRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/auth"
+	clientRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/client"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -21,6 +22,10 @@ func Init() *echo.Echo {
 	// Group Auth
 	authGroup := e.Group("/auth")
 	authRoute.AuthSubRoute(authGroup)
+
+	// Group Client
+	clientGroup := e.Group("/client")
+	clientRoute.ClientSubRoute(clientGroup)
 
 	return e
 }

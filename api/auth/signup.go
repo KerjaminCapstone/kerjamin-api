@@ -26,7 +26,8 @@ func SignUp(c echo.Context) error {
 	db := database.GetDBInstance()
 	timeNow := time.Now()
 	newUser := &model.User{
-		IdUser:    form.Role + helper.RandomStr(10),
+		IdUser:    form.Role + "-" + helper.RandomStr(10),
+		Username:  form.Username,
 		Name:      form.Nama,
 		Email:     form.Email,
 		Password:  helper.GeneratePwd(form.Password),
@@ -37,15 +38,25 @@ func SignUp(c echo.Context) error {
 		return nil
 	})
 
+	convertJk, _ := strconv.ParseBool(form.JenisKelamin)
+	convertDate, _ := time.Parse("2006-01-02", form.TanggalLahir)
 	if form.Role == "FR" {
-		convertJk, _ := strconv.ParseBool(form.JenisKelamin)
-		convertDate, _ := time.Parse("2006-01-02", form.TanggalLahir)
 		db.Create(&model.FreelanceData{
 			IdUser:    newUser.IdUser,
 			IsTrainee: false,
 			Rating:    0.0,
 			JobDone:   0,
 			DateJoin:  timeNow,
+			Address:   form.Alamat,
+			IsMale:    convertJk,
+			Dob:       convertDate,
+			Nik:       form.Nik,
+			CreatedAt: timeNow,
+			UpdatedAt: timeNow,
+		})
+	} else if form.Role == "CL" {
+		db.Create(&model.ClientData{
+			IdUser:    newUser.IdUser,
 			Address:   form.Alamat,
 			IsMale:    convertJk,
 			Dob:       convertDate,
