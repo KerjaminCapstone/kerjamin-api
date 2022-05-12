@@ -4,8 +4,10 @@ type ResponseSuccess struct {
 	Data interface{} `json:"data"`
 }
 
+type ResponseCreate struct {
+	Message string `json:"message"`
+}
+
 type ResponseFail struct {
-	Status       int
-	Error        bool
 	ErrorMessage string
 }
