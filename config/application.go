@@ -16,3 +16,13 @@ func GetApplicationPort() string {
 
 	return os.Getenv("APP_PORT")
 }
+
+func GetSignatureKey() []byte {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error to load .env file")
+	}
+
+	return []byte(os.Getenv("JWT_SECRET_KEY"))
+}

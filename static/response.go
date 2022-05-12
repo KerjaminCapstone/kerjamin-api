@@ -11,3 +11,7 @@ type ResponseCreate struct {
 type ResponseFail struct {
 	ErrorMessage string
 }
+
+type ResponseToken struct {
+	Token string `json:"token"`
+}
