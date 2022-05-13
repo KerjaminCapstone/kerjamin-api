@@ -32,3 +32,15 @@ func (u *User) FindRoles() []RoleScan {
 
 	return roles
 }
+
+func (u *User) HaveRole(roleId string) bool {
+	var x RoleScan
+	db := database.GetDBInstance()
+	db.Model(&User{}).Select("users.id_user, user_role.id_role").
+		Joins("left join user_role on user_role.id_user = users.id_user").
+		Where("users.id_user = ?", u.IdUser).
+		Where("user_role.id_role = ?", roleId).
+		Scan(&x)
+
+	return x.IdRole != ""
+}

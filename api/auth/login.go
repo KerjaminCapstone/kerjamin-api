@@ -6,7 +6,6 @@ import (
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/config"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/helper"
-	"github.com/KerjaminCapstone/kerjamin-backend-v1/model"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/schema"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
 	"github.com/golang-jwt/jwt"
@@ -16,7 +15,6 @@ import (
 type JwtCustomClaims struct {
 	UId     string `json:"uid"`
 	RoleId1 string `json:"role_id_1"`
-	RoleId2 string `json:"role_id_2"`
 	jwt.StandardClaims
 }
 
@@ -31,26 +29,18 @@ func Login(c echo.Context) error {
 		return err
 	}
 
-	obj, err := helper.FindByEmail(form.Email)
+	obj, errEmail := helper.FindByEmail(form.Email)
+	rlFound, errRole := helper.FindRoleByName(form.Role)
 
-	if err != nil {
-		return err
-	}
-	if helper.CheckPassword(obj.Password, form.Password) {
-		return &static.LoginError{}
-	}
-	roles := obj.FindRoles()
-	if len(roles) == 1 {
-		roles = append(roles, model.RoleScan{
-			IdRole: "",
-			IdUser: "",
-		})
+	switch {
+	case errEmail != nil, helper.IsPwdFalse(obj.Password, form.Password),
+		errRole != nil, obj.HaveRole(rlFound.IdRole) == false:
+		return &static.AuthError{}
 	}
 
 	claims := &JwtCustomClaims{
 		obj.IdUser,
-		roles[0].IdRole,
-		roles[1].IdUser,
+		rlFound.IdRole,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 8760).Unix(),
 		},
@@ -59,7 +49,7 @@ func Login(c echo.Context) error {
 	t, errJwt := token.SignedString(config.GetSignatureKey())
 
 	if errJwt != nil {
-		return errJwt
+		return c.JSON(http.StatusOK, "rsp")
 	}
 
 	rsp := static.ResponseToken{

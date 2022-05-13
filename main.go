@@ -43,8 +43,8 @@ func main() {
 			}
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
 			report = echo.NewHTTPError(http.StatusNotFound, "Data tidak ditemukan")
-		} else if errors.Is(err, &static.LoginError{}) {
-			report = echo.NewHTTPError(http.StatusUnauthorized, err)
+		} else if errors.Is(err, &static.AuthError{}) {
+			report = echo.NewHTTPError(http.StatusUnauthorized, "User tidak ditemukan")
 		}
 
 		c.Logger().Error(report)

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	customMiddleware "github.com/KerjaminCapstone/kerjamin-backend-v1/middleware"
 	authRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/auth"
 	clientRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/client"
 	"github.com/labstack/echo/v4"
@@ -24,7 +25,8 @@ func Init() *echo.Echo {
 	authRoute.AuthSubRoute(authGroup)
 
 	// Group Client
-	clientGroup := e.Group("/client")
+	clientGroup := e.Group("/client", customMiddleware.IsAuthenticated)
+	clientGroup.Use(customMiddleware.CheckRole("client"))
 	clientRoute.ClientSubRoute(clientGroup)
 
 	return e
