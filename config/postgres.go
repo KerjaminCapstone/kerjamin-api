@@ -34,7 +34,7 @@ func GetPostgresCredential() PostgresCredential {
 
 func GetPostgresConnectionString() string {
 	credential := GetPostgresCredential()
-	dataBase := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+	dataBase := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=require",
 		credential.DBHost,
 		credential.DBPort,
 		credential.DBUsername,
