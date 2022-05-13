@@ -18,7 +18,7 @@ func Init(params ...string) *gorm.DB {
 	var err error
 	db, err = gorm.Open(postgres.Open(conString), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			SingularTable: false,
+			SingularTable: true,
 		},
 	})
 

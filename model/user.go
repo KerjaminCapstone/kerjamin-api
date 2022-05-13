@@ -25,8 +25,8 @@ func (u *User) FindRoles() []RoleScan {
 	var roles []RoleScan
 	db := database.GetDBInstance()
 
-	db.Model(&User{}).Select("users.id_user, roles.id_role").Where("users.id_user = ?", u.IdUser).
-		Joins("left join user_role on user_role.id_user = users.id_user").
+	db.Model(&User{}).Select("public.user.id_user, roles.id_role").Where("public.user.id_user = ?", u.IdUser).
+		Joins("left join user_role on user_role.id_user = user.id_user").
 		Joins("left join roles on roles.id_role = user_role.id_role").
 		Scan(&roles)
 
@@ -36,9 +36,9 @@ func (u *User) FindRoles() []RoleScan {
 func (u *User) HaveRole(roleId string) bool {
 	var x RoleScan
 	db := database.GetDBInstance()
-	db.Model(&User{}).Select("users.id_user, user_role.id_role").
-		Joins("left join user_role on user_role.id_user = users.id_user").
-		Where("users.id_user = ?", u.IdUser).
+	db.Model(&User{}).Select("public.user.id_user, user_role.id_role").
+		Joins("left join user_role on user_role.id_user = public.user.id_user").
+		Where("public.user.id_user = ?", u.IdUser).
 		Where("user_role.id_role = ?", roleId).
 		Scan(&x)
 

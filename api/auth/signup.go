@@ -50,7 +50,12 @@ func SignUp(c echo.Context) error {
 		CreatedAt: timeNow,
 		UpdatedAt: timeNow,
 	})
-	if obj.Error != nil {
+	clientRole, _ := helper.FindRoleByName("client")
+	uR := db.Create(&model.UserRole{
+		IdUser: newUser.IdUser,
+		IdRole: clientRole.IdRole,
+	})
+	if obj.Error != nil || uR.Error != nil {
 		return obj.Error
 	}
 
