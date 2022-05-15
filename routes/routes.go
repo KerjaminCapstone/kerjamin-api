@@ -4,6 +4,7 @@ import (
 	customMiddleware "github.com/KerjaminCapstone/kerjamin-backend-v1/middleware"
 	authRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/auth"
 	clientRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/client"
+	freelanceRoute "github.com/KerjaminCapstone/kerjamin-backend-v1/routes/freelance"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -28,6 +29,11 @@ func Init() *echo.Echo {
 	clientGroup := e.Group("/client", customMiddleware.IsAuthenticated)
 	clientGroup.Use(customMiddleware.CheckRole("client"))
 	clientRoute.ClientSubRoute(clientGroup)
+
+	// Freelance Group
+	freelanceGroup := e.Group("/freelance", customMiddleware.IsAuthenticated)
+	freelanceGroup.Use(customMiddleware.CheckRole("freelance"))
+	freelanceRoute.FreelanceSubRoute(freelanceGroup)
 
 	return e
 }
