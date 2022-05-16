@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+const API_ROUTE = "/api/"
 const CSRFTokenHeader = "X-CSRF-Token"
 const CSRFKey = "csrf"
 
@@ -22,17 +23,17 @@ func Init() *echo.Echo {
 	}))
 
 	// Group Auth
-	authGroup := e.Group("/auth")
+	authGroup := e.Group(API_ROUTE + "auth")
 	authRoute.AuthSubRoute(authGroup)
 
 	// Group Client
-	clientGroup := e.Group("/client", customMiddleware.IsAuthenticated)
+	clientGroup := e.Group(API_ROUTE+"client", customMiddleware.IsAuthenticated)
 	clientGroup.Use(customMiddleware.CheckRole("client"))
 	clientRoute.ClientSubRoute(clientGroup)
 
 	// Freelance Group
-	freelanceGroup := e.Group("/freelance", customMiddleware.IsAuthenticated)
-	freelanceGroup.Use(customMiddleware.CheckRole("freelance"))
+	freelanceGroup := e.Group(API_ROUTE+"freelancer", customMiddleware.IsAuthenticated)
+	freelanceGroup.Use(customMiddleware.CheckRole("freelancer"))
 	freelanceRoute.FreelanceSubRoute(freelanceGroup)
 
 	return e

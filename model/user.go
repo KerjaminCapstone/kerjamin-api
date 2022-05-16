@@ -44,3 +44,13 @@ func (u *User) HaveRole(roleId string) bool {
 
 	return x.IdRole != ""
 }
+
+func (u *User) FindFreelanceAcc() (*FreelanceData, error) {
+	db := database.GetDBInstance()
+	var fr FreelanceData
+	if err := db.First(&fr, "id_user = ?", u.IdUser).Error; err != nil {
+		return nil, err
+	}
+
+	return &fr, nil
+}

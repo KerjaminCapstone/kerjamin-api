@@ -6,5 +6,5 @@ import (
 )
 
 func FreelanceSubRoute(group *echo.Group) {
-	group.GET("/offering", freelance.OfferingList)
+	group.GET("/offerings", freelance.OfferingList)
 }
