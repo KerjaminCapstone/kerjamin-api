@@ -7,4 +7,6 @@ import (
 
 func FreelanceSubRoute(group *echo.Group) {
 	group.GET("/offerings", freelance.OfferingList)
+	group.GET("/offerings/:id_order", freelance.OfferingDetail)
+	group.PATCH("/offerings/:id_order/update", freelance.UpdateOffering)
 }
