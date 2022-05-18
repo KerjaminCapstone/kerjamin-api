@@ -3,7 +3,7 @@ package model
 import "time"
 
 type OrderTask struct {
-	IdTask     string `gorm:"primaryKey"`
+	IdTask     string `gorm:"primaryKey;autoIncrement;"`
 	IdOrder    string
 	TaskDesc   string
 	TaskStatus bool

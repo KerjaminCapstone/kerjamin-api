@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
