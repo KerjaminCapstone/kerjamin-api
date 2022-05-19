@@ -7,4 +7,7 @@ type OfferingDetail struct {
 	Keluhan    string `json:"keluhan"`
 	NoWaClient string `json:"no_wa_client"`
 	Status     string `json:"status"`
+	Biaya      string `json:"biaya"`
+	Komentar   string `json:"komentar"`
+	Rating     string `json:"rating"`
 }
