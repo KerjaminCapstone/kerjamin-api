@@ -68,7 +68,7 @@ func OfferingDetail(c echo.Context) error {
 
 	var order schema.OfferingDetail
 	res := db.Model(&model.Order{}).Select(`public.order.id_order as id_order_fr, public.order.id_client, public.order.id_freelance, 
-				public.order.job_description as keluhan, public.user.no_wa as no_wa_client,
+				public.order.job_description as keluhan, public.user.no_wa as no_wa_client, public.order.job_long, public.order.job_lat,
 				public.job_child_code.job_child_name as job_title, public.client_data.id_user, 
 				public.user.name as client_name, public.order_status.status_name as status,
 				public.order_payment.value as biaya, public.order_review.commentary as komentar,
