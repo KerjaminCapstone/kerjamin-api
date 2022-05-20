@@ -12,6 +12,7 @@ type User struct {
 	Username  string `validate:"required"`
 	Email     string `validate:"required"`
 	Password  string `validate:"required,gte=5,lte=30"`
+	NoWa      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -19,6 +20,10 @@ type User struct {
 type RoleScan struct {
 	IdRole string
 	IdUser string
+}
+
+func (User) TableName() string {
+	return "public.user"
 }
 
 func (u *User) FindRoles() []RoleScan {

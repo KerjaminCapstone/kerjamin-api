@@ -10,7 +10,7 @@ import (
 )
 
 // parameter longitude, latitude,
-func searchFreelance(c echo.Context) error {
+func SearchFreelance(c echo.Context) error {
 	type Payload struct {
 		JobCode      string  `json:"job_code"`
 		JobChildCode string  `json:"job_child_code"`
