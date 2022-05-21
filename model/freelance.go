@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
+	"gorm.io/gorm"
 )
 
 type FreelanceData struct {
@@ -25,6 +26,14 @@ type FreelanceData struct {
 	UpdatedAt   time.Time
 }
 
+type KeahlianFreelance struct {
+	Keahlian string
+}
+
+type BidangFreelance struct {
+	Bidang string
+}
+
 func (fd *FreelanceData) FindNlpTag() (*FreelancerNlp, error) {
 	var nlpTags FreelancerNlp
 	db := database.GetDBInstance()
@@ -34,4 +43,43 @@ func (fd *FreelanceData) FindNlpTag() (*FreelancerNlp, error) {
 	}
 
 	return &nlpTags, nil
+}
+
+func (fd *FreelanceData) FindFreelanceKeahlian() (string, error) {
+	db := database.GetDBInstance()
+
+	var data KeahlianFreelance
+	res := db.Model(&FreelanceData{}).Select("job_child_code.job_child_name as keahlian").
+		Joins(`left join public.job_child_code on job_child_code.job_child_code = public.freelance_data.job_child_code`).
+		Where(`public.freelance_data.id_freelance = ?`, fd.IdFreelance).Scan(&data)
+
+	if res.Error != nil {
+		return "", res.Error
+	}
+
+	if res.RowsAffected == 0 {
+		return "", gorm.ErrRecordNotFound
+	}
+
+	return data.Keahlian, nil
+}
+
+func (fd *FreelanceData) FindFreelanceBidang() (string, error) {
+	db := database.GetDBInstance()
+
+	var data BidangFreelance
+	res := db.Model(&FreelanceData{}).Select("job_code.job_category as bidang").
+		Joins(`left join public.job_child_code job_child_code on job_child_code.job_child_code = public.freelance_data.job_child_code`).
+		Joins(`left join public.job_code job_code on job_code.job_code = job_child_code.job_code`).
+		Where(`public.freelance_data.id_freelance = ?`, fd.IdFreelance).Scan(&data)
+
+	if res.Error != nil {
+		return "", res.Error
+	}
+
+	if res.RowsAffected == 0 {
+		return "", gorm.ErrRecordNotFound
+	}
+
+	return data.Bidang, nil
 }

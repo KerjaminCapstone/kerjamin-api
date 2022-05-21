@@ -6,7 +6,7 @@ import (
 )
 
 func ClientSubRoute(group *echo.Group) {
-	group.GET("/freelance", client.DataFreelance)
+	group.GET("/freelance/:id_freelance", client.DataFreelance)
 	group.GET("/me", client.DataPersonal)
 	group.POST("/search/freelance", client.ListFreelance)
 

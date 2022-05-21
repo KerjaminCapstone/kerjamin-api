@@ -13,7 +13,7 @@ import (
 )
 
 func DataFreelance(c echo.Context) error {
-	idFreelance := c.QueryParam("idFreelance")
+	idFreelance := c.Param("id_freelance")
 	db := database.GetDBInstance()
 
 	var freelanceData model.FreelanceData
@@ -28,12 +28,26 @@ func DataFreelance(c echo.Context) error {
 		return err
 	}
 
+	bidang, errBidang := freelanceData.FindFreelanceBidang()
+	if errBidang != nil {
+		return errBidang
+	}
+	keahlian, errKeahlian := freelanceData.FindFreelanceKeahlian()
+	if errKeahlian != nil {
+		return errKeahlian
+	}
+	nlpTag, errNlp := freelanceData.FindNlpTag()
+	if errNlp != nil {
+		return errNlp
+	}
+
 	data := &schema.FreelanceData{
-		Nama:     user.Name,
-		Bidang:   "",
-		Keahlian: "",
-		Nik:      freelanceData.Nik,
-		Alamat:   freelanceData.Address,
+		Nama:       user.Name,
+		Bidang:     bidang,
+		Keahlian:   keahlian,
+		NoWhatsapp: user.NoWa,
+		Alamat:     freelanceData.Address,
+		NlpTag:     nlpTag,
 	}
 	if freelanceData.IsMale {
 		data.JenisKelamin = "Pria"
