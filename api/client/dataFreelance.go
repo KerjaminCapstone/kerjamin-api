@@ -44,6 +44,7 @@ func DataFreelance(c echo.Context) error {
 	data := &schema.FreelanceData{
 		Nama:     user.Name,
 		Bidang:   bidang,
+		Alamat:   freelanceData.Address,
 		Keahlian: keahlian,
 		NlpTag:   nlpTag,
 	}
