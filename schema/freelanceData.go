@@ -6,8 +6,7 @@ type FreelanceData struct {
 	Bidang       string               `json:"bidang"`
 	Keahlian     string               `json:"keahlian"`
 	Nama         string               `json:"nama"`
-	NoWhatsapp   string               `json:"no_telp"`
-	Alamat       string               `json:"lokasi"`
+	Alamat       string               `json:"alamat"`
 	JenisKelamin string               `json:"jenis_kelamin"`
 	NlpTag       *model.FreelancerNlp `json:"tag_nlp"`
 }

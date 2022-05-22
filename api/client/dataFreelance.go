@@ -42,12 +42,10 @@ func DataFreelance(c echo.Context) error {
 	}
 
 	data := &schema.FreelanceData{
-		Nama:       user.Name,
-		Bidang:     bidang,
-		Keahlian:   keahlian,
-		NoWhatsapp: user.NoWa,
-		Alamat:     freelanceData.Address,
-		NlpTag:     nlpTag,
+		Nama:     user.Name,
+		Bidang:   bidang,
+		Keahlian: keahlian,
+		NlpTag:   nlpTag,
 	}
 	if freelanceData.IsMale {
 		data.JenisKelamin = "Pria"
