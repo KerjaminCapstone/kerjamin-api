@@ -1,6 +1,7 @@
 package freelance
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -37,7 +38,7 @@ func OfferingList(c echo.Context) error {
 		Joins(`left join public.freelance_data on public.freelance_data.id_freelance = public.order.id_freelance`).
 		Joins(`left join public.user on public.user.id_user = public.client_data.id_user`).
 		Joins(`left join public.job_child_code on public.job_child_code.job_child_code = public.order.job_child_code`).
-		Where(`public.order.id_status IN ?`, []int{1, 2, 5}). // Diterima, proses, assigned
+		Where(`public.order.id_status IN ?`, []int{1, 2, 4, 6}). // Diterima, proses, assigned
 		Scan(&orders)
 	if orders == nil {
 		orders = []schema.OfferingItem{}
@@ -71,7 +72,7 @@ func OfferingDetail(c echo.Context) error {
 				public.order.job_description as keluhan, public.user.no_wa as no_wa_client, public.order.job_long, public.order.job_lat,
 				public.job_child_code.job_child_name as job_title, public.client_data.id_user, 
 				public.user.name as client_name, public.order_status.status_name as status,
-				public.order_payment.value as biaya, public.order_review.commentary as komentar,
+				public.order_payment.value_clean as biaya, public.order_review.commentary as komentar,
 				public.order_review.rating as rating`).
 		Where(`public.order.id_freelance = ?`, fr.IdFreelance).
 		Where(`public.order.id_order = ?`, idOrder).
@@ -155,42 +156,141 @@ func ArrangeOffering(c echo.Context) error {
 		return gorm.ErrRecordNotFound
 	}
 
-	timeNow := time.Now()
-	newOdPayment := model.OrderPayment{
-		IdOrder:   order.IdOrder,
-		Value:     int(form.Value),
-		IdMethod:  1,
-		IsPaid:    false,
-		CreatedAt: timeNow,
-		UpdatedAt: timeNow,
-	}
-
-	var tasks []model.OrderTask
-	for _, t := range form.TaskDescs {
-		task := model.OrderTask{
+	// TODO: buat check kalau udah ada paymentnya di update aja
+	valueClean := int64(form.Value)
+	appFee := int64(float64(valueClean) * (float64(2) / 100))
+	fmt.Println(appFee)
+	valueTotal := valueClean + appFee
+	ordPayment := order.GetPayment()
+	if ordPayment != nil {
+		ordPayment.ValueClean = valueClean
+		ordPayment.AppFee = appFee
+		ordPayment.ValueTotal = valueTotal
+		db.Save(ordPayment)
+	} else {
+		timeNow := time.Now()
+		newOdPayment := model.OrderPayment{
 			IdOrder:    order.IdOrder,
-			TaskDesc:   t,
-			TaskStatus: false,
+			ValueClean: int64(form.Value),
+			AppFee:     appFee,
+			ValueTotal: valueTotal,
+			IdMethod:   1,
+			IsPaid:     false,
 			CreatedAt:  timeNow,
 			UpdatedAt:  timeNow,
 		}
-		tasks = append(tasks, task)
-	}
 
-	err1 := db.Create(&newOdPayment).Error
-	if err1 != nil {
-		return err1
+		err1 := db.Create(&newOdPayment).Error
+		if err1 != nil {
+			return err1
+		}
 	}
-	err2 := db.Create(&tasks).Error
-	if err2 != nil {
-		return err2
-	}
+	order.IdStatus = 4
+	db.Save(&order)
 
 	response := static.ResponseCreate{
 		Message: "Biaya dan pekerjaan berhasil ditentukan",
 	}
 
 	return c.JSON(http.StatusCreated, response)
+}
+
+func AddTask(c echo.Context) error {
+	idOrder := c.Param("id_order")
+	form := new(schema.ArrangeTask)
+
+	if err := c.Bind(form); err != nil {
+		return err
+	}
+
+	if err := c.Validate(form); err != nil {
+		return err
+	}
+
+	timeNow := time.Now()
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	newOdTask := model.OrderTask{
+		IdOrder:    order.IdOrder,
+		TaskDesc:   form.Task,
+		TaskStatus: false,
+		CreatedAt:  timeNow,
+		UpdatedAt:  timeNow,
+	}
+	_ = db.Transaction(func(tx *gorm.DB) error {
+		tx.Create(&newOdTask)
+		return nil
+	})
+
+	response := static.ResponseSuccess{
+		Data: newOdTask,
+	}
+
+	return c.JSON(http.StatusCreated, response)
+}
+
+func DeleteTask(c echo.Context) error {
+	idOrder := c.Param("id_order")
+	idTask := c.Param("id_task")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	if err1 := db.Delete(&model.OrderTask{}, idTask).Error; err1 != nil {
+		return err1
+	}
+
+	response := static.ResponseCreate{
+		Message: "Pekerjaan berhasil dihapus",
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func GetArrangement(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	ordPayment := order.GetPayment()
+	var valueClean int64
+	if ordPayment == nil {
+		valueClean = 0
+	} else {
+		valueClean = ordPayment.ValueClean
+	}
+
+	obj := schema.OrderArrangement{
+		ValueClean: valueClean,
+		Tasks:      order.GetTasks(),
+	}
+	response := static.ResponseSuccess{
+		Data: obj,
+	}
+
+	return c.JSON(http.StatusOK, response)
 }
 
 func RefreshStatus(c echo.Context) error {
@@ -239,7 +339,7 @@ func HistoriOffering(c echo.Context) error {
 		Joins(`left join public.freelance_data on public.freelance_data.id_freelance = public.order.id_freelance`).
 		Joins(`left join public.user on public.user.id_user = public.client_data.id_user`).
 		Joins(`left join public.job_child_code on public.job_child_code.job_child_code = public.order.job_child_code`).
-		Where(`public.order.id_status IN ?`, []int{3, 4}). // Selesai dan ditolak
+		Where(`public.order.id_status IN ?`, []int{3, 5, 7}). // Selesai dan ditolak
 		Scan(&orders)
 	if orders == nil {
 		orders = []schema.OfferingItem{}
