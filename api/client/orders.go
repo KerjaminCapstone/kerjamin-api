@@ -260,3 +260,24 @@ func ReviewOrder(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, err2.Error)
 }
+
+func ReportViolation(c echo.Context) error {
+	type report_violation struct {
+		Id_order string `json:"id_order"`
+		Title    string `json:"title"`
+		Desc     string `json:"desc"`
+	}
+	var payload report_violation
+	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
+		return echo.ErrBadRequest
+	}
+	db := database.GetDBInstance()
+
+	err := db.Raw(`insert into report_violation(id_order,created_by,title,desc,report_status,created_at,updated_at)
+	values(?,"client",?,?,1,?,?)`, payload.Id_order, payload.Title, payload.Desc, time.Now(), time.Now()).Error
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, err)
+}

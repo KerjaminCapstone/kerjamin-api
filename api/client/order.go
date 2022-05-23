@@ -13,7 +13,7 @@ import (
 func OngoingOrder(c echo.Context) error {
 	var result []model.Order
 	uId, _ := helper.ExtractToken(c)
-	var id_client string
+	var id_client int
 	db := database.GetDBInstance()
 	err := db.Raw("select * from client_data where id_user=?", uId).Scan(&id_client).Error
 	if err != nil {
