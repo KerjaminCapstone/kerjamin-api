@@ -59,3 +59,13 @@ func (u *User) FindFreelanceAcc() (*FreelanceData, error) {
 
 	return &fr, nil
 }
+
+func (u *User) FindClientAcc() (*ClientData, error) {
+	db := database.GetDBInstance()
+	var cl ClientData
+	if err := db.First(&cl, "id_user = ?", u.IdUser).Error; err != nil {
+		return nil, err
+	}
+
+	return &cl, nil
+}

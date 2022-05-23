@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/KerjaminCapstone/kerjamin-backend-v1/config"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/routes"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
@@ -51,7 +52,7 @@ func main() {
 		c.JSON(report.Code, report)
 	}
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(config.GetAppUrl()))
 }
 
 // Validation

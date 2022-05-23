@@ -26,3 +26,13 @@ func GetSignatureKey() []byte {
 
 	return []byte(os.Getenv("JWT_SECRET_KEY"))
 }
+
+func GetAppUrl() string {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error to load .env file")
+	}
+
+	return os.Getenv("APP_URL") + ":" + os.Getenv("APP_PORT")
+}

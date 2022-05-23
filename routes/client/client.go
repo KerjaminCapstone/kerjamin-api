@@ -6,8 +6,13 @@ import (
 )
 
 func ClientSubRoute(group *echo.Group) {
-	group.GET("/freelance/:id_freelance", client.DataFreelance)
 	group.GET("/me", client.DataPersonal)
 	group.POST("/search/freelance", client.ListFreelance)
 
+	group.GET("/freelance/:id_freelance", client.DataFreelance)
+	group.POST("/freelance/:id_freelance/order", client.SubmitOrder)
+
+	group.GET("/orders/:id_order", client.DetailPesanan)
+	group.PATCH("/orders/:id_order/confirm", client.ConfirmOrder)
+	group.PATCH("/orders/:id_order/cancel", client.CancelOrder)
 }
