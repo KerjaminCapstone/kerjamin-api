@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -9,12 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Payload struct {
-	JobCode      string  `json:"job_code"`
-	JobChildCode string  `json:"job_child_code"`
-	AddressLong  float64 `json:"address_long"`
-	AddressLat   float64 `json:"address_lat"`
-}
 type Response struct {
 	IdFreelance int `gorm:"primaryKey;autoIncrement;"`
 	IdUser      string
@@ -39,11 +32,6 @@ func ListFreelance(c echo.Context) error {
 	long := c.Param("long")
 	lat := c.Param("lat")
 	job_code := c.Param("job_code")
-
-	var payload Payload
-	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
-		return echo.ErrBadRequest
-	}
 
 	var result []Response
 
