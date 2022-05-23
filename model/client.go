@@ -6,7 +6,6 @@ type ClientData struct {
 	IdClient    int `gorm:"primaryKey;autoIncrement;"`
 	IdUser      string
 	HousePict   string
-	PhoneNumber string
 	Address     string
 	AddressLong float64
 	AddressLat  float64

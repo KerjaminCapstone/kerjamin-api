@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 
-	"github.com/KerjaminCapstone/kerjamin-backend-v1/config"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/routes"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
@@ -52,7 +52,12 @@ func main() {
 		c.JSON(report.Code, report)
 	}
 
-	e.Logger.Fatal(e.Start(config.GetAppUrl()))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
+	e.Logger.Fatal(e.Start(":" + port))
 }
 
 // Validation
