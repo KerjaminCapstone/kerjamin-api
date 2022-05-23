@@ -7,7 +7,7 @@ type SignUp struct {
 	Alamat       string `json:"alamat" validate:"required"`
 	JenisKelamin string `json:"jenis_kelamin" validate:"required"`
 	TanggalLahir string `json:"tanggal_lahir" validate:"required"`
-	NoTelepon    string `json:"nomor_telepon" validate:"required"`
+	NoWa         string `json:"no_wa" validate:"required"`
 	Email        string `json:"email" validate:"required"`
 	Password     string `json:"password" validate:"required"`
 	Role         string `json:"role" validate:"required"`

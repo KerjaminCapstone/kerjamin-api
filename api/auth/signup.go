@@ -31,6 +31,7 @@ func SignUp(c echo.Context) error {
 		Username:  form.Username,
 		Name:      form.Nama,
 		Email:     form.Email,
+		NoWa:      form.NoWa,
 		Password:  helper.GeneratePwd(form.Password),
 		CreatedAt: timeNow, UpdatedAt: timeNow,
 	}
