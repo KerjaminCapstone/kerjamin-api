@@ -5,6 +5,7 @@ type OrderDetail struct {
 	JobChildName   string  `json:"keahlian"`
 	NoWa           string  `json:"no_whatsapp"`
 	Rating         float64 `json:"rating"`
+	IdStatus       int     `json:"id_status"`
 	StatusName     string  `json:"status"`
 	JobDescription string  `json:"keluhan"`
 	ValueClean     int64   `json:"perkiraan_harga"`

@@ -35,7 +35,7 @@ func SubmitOrder(c echo.Context) error {
 
 	idOd := helper.RandomStr(8)
 	if idOd == "" {
-		return echo.ErrInternalServerError
+		return echo.ErrNotFound
 	}
 
 	clientData, errClient := user.FindClientAcc()
@@ -89,7 +89,7 @@ func DetailPesanan(c echo.Context) error {
 	var order schema.OrderDetail
 	res := db.Model(&model.Order{}).Select(`public.order.job_description, public.freelance_data.rating,
 			public.user.name, public.user.no_wa, public.job_child_code.job_child_name, public.order_status.status_name,
-			public.order_payment.value_clean, public.order_payment.value_total`).
+			public.order_payment.value_clean, public.order_payment.value_total, public.order.id_status`).
 		Where(`public.order.id_order = ?`, idOrder).
 		Joins(`left join public.freelance_data on public.freelance_data.id_freelance = public.order.id_freelance`).
 		Joins(`left join public.user on public.user.id_user = public.freelance_data.id_user`).
@@ -106,4 +106,48 @@ func DetailPesanan(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, order)
+}
+
+func ConfirmOrder(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	order.IdStatus = 6
+	db.Save(&order)
+
+	response := static.ResponseCreate{
+		Message: "Order berhasil dikonfirmasi. Order akan segera diproses",
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func CancelOrder(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	order.IdStatus = 5
+	db.Save(&order)
+
+	response := static.ResponseCreate{
+		Message: "Order telah dibatalkan oleh Client",
+	}
+	return c.JSON(http.StatusOK, response)
 }

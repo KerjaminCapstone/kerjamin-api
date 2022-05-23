@@ -13,4 +13,6 @@ func ClientSubRoute(group *echo.Group) {
 	group.POST("/freelance/:id_freelance/order", client.SubmitOrder)
 
 	group.GET("/orders/:id_order", client.DetailPesanan)
+	group.PATCH("/orders/:id_order/confirm", client.ConfirmOrder)
+	group.PATCH("/orders/:id_order/cancel", client.CancelOrder)
 }
