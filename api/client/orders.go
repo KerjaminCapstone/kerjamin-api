@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -228,6 +229,33 @@ func HistoryOrder(c echo.Context) error {
 
 	result := &static.ResponseSuccess{
 		Data: orders,
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func ReviewOrder(c echo.Context) error {
+	type review_order struct {
+		id_order   string `json:"id_order"`
+		rating     int    `json:"rating"`
+		commentary string `json:"string"`
+	}
+	var payload review_order
+	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
+		return echo.ErrBadRequest
+	}
+	db := database.GetDBInstance()
+	var id_freelance string
+
+	err := db.Raw(`select id_freelance from "order" where id_order = ?`, payload.id_order).Scan((&id_freelance)).Error
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	err2:= db.Raw (`insert into order_review(id_order,id_freelance,rating,commentary,created_at,updated_at) values(?,?,?,?,?,?)`
+	payload.id_order,id_freelance,payload.rating,payload.commentary,time.Now(),time.Now()).Error
+	if err2 != nil{
+		return echo.ErrInternalServerError
 	}
 
 	return c.JSON(http.StatusOK, result)
