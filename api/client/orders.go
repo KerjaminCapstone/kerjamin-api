@@ -279,5 +279,9 @@ func ReportViolation(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, err)
+	msg := static.ResponseCreate{
+		Message: "Laporan Sukses",
+	}
+
+	return c.JSON(http.StatusOK, msg)
 }
