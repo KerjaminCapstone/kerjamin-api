@@ -10,15 +10,20 @@ import (
 )
 
 // HAVEN'T WORK
-func Order(c echo.Context) error {
-	var result model.ClientData
+func OngoingOrder(c echo.Context) error {
+	var result []model.Order
 	uId, _ := helper.ExtractToken(c)
-
+	var id_client string
 	db := database.GetDBInstance()
-	err := db.Raw("select * from client_data where id_user=?", uId).Scan(&result).Error
+	err := db.Raw("select * from client_data where id_user=?", uId).Scan(&id_client).Error
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
 
+	err = db.Raw(`select * from "order" o 
+	where o.id_client =?`, id_client).Scan(&id_client).Error
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
 	return c.JSON(http.StatusOK, result)
 }
