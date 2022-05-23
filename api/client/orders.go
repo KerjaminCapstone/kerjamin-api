@@ -238,7 +238,7 @@ func ReviewOrder(c echo.Context) error {
 	type review_order struct {
 		Id_order   string `json:"id_order"`
 		Rating     int    `json:"rating"`
-		Commentary string `json:"string"`
+		Commentary string `json:"commentary"`
 	}
 	var payload review_order
 	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {

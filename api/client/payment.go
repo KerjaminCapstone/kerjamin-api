@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
+	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,7 +15,7 @@ func PaymentMethod(c echo.Context) error {
 		Id_method    int    `json:"id_method"`
 		Payment_name string `json:"payment_name"`
 	}
-	var result Result
+	var result []Result
 	db := database.GetDBInstance()
 	err := db.Raw("select * from payment_method").Scan(&result).Error
 	if err != nil {
@@ -39,6 +40,9 @@ func OrderPayment(c echo.Context) error {
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
+	msg := static.ResponseCreate{
+		Message: "Tagihan Terbayar",
+	}
 
-	return c.JSON(http.StatusOK, payload)
+	return c.JSON(http.StatusOK, msg)
 }

@@ -9,22 +9,19 @@ import (
 )
 
 type Response struct {
-	IdFreelance int `gorm:"primaryKey;autoIncrement;"`
-	IdUser      string
-	IsTrainee   bool
-	Rating      float64
-	JobDone     int
-	DateJoin    time.Time
-	Address     string
-	AddressLong float64
-	AddressLat  float64
-	IsMale      bool
-	Dob         time.Time
-	Nik         string
-	ProfilePict string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Distance    float64 `json:"distance"`
+	IdFreelance int       `json:"id_freelance"`
+	IsTrainee   bool      `json:"is_trainee"`
+	Rating      float64   `json:"rating"`
+	JobDone     int       `json:"job_done"`
+	DateJoin    time.Time `json:"date_join"`
+	Address     string    `json:"address"`
+	AddressLong float64   `json:"address_long"`
+	AddressLat  float64   `json:"address_lat"`
+	IsMale      bool      `json:"is_male"`
+	Dob         time.Time `json:"dob"`
+	Nik         string    `json:"nik"`
+	ProfilePict string    `json:"profile_pict"`
+	Distance    float64   `json:"distance"`
 }
 
 // parameter longitude, latitude,
