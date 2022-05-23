@@ -72,12 +72,11 @@ func SubmitOrder(c echo.Context) error {
 		return errOrder
 	}
 
+	data := schema.SubmitOrderRes{
+		IdOrder: newIdOd,
+	}
 	res := static.ResponseSuccess{
-		Data: struct {
-			id_order string
-		}{
-			id_order: "OD-" + idOd,
-		},
+		Data: data,
 	}
 	return c.JSON(http.StatusCreated, res)
 }
