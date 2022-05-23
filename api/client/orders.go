@@ -236,9 +236,9 @@ func HistoryOrder(c echo.Context) error {
 
 func ReviewOrder(c echo.Context) error {
 	type review_order struct {
-		id_order   string `json:"id_order"`
-		rating     int    `json:"rating"`
-		commentary string `json:"string"`
+		Id_order   string `json:"id_order"`
+		Rating     int    `json:"rating"`
+		Commentary string `json:"string"`
 	}
 	var payload review_order
 	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
@@ -247,16 +247,16 @@ func ReviewOrder(c echo.Context) error {
 	db := database.GetDBInstance()
 	var id_freelance string
 
-	err := db.Raw(`select id_freelance from "order" where id_order = ?`, payload.id_order).Scan((&id_freelance)).Error
+	err := db.Raw(`select id_freelance from "order" where id_order = ?`, payload.Id_order).Scan((&id_freelance)).Error
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
 
-	err2:= db.Raw (`insert into order_review(id_order,id_freelance,rating,commentary,created_at,updated_at) values(?,?,?,?,?,?)`
-	payload.id_order,id_freelance,payload.rating,payload.commentary,time.Now(),time.Now()).Error
-	if err2 != nil{
+	err2 := db.Raw(`insert into order_review(id_order,id_freelance,rating,commentary,created_at,updated_at) values(?,?,?,?,?,?)`,
+		payload.Id_order, id_freelance, payload.Rating, payload.Commentary, time.Now(), time.Now())
+	if err2.Error != nil {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, err2.Error)
 }
