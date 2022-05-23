@@ -15,4 +15,9 @@ func ClientSubRoute(group *echo.Group) {
 	group.GET("/orders/:id_order", client.DetailPesanan)
 	group.PATCH("/orders/:id_order/confirm", client.ConfirmOrder)
 	group.PATCH("/orders/:id_order/cancel", client.CancelOrder)
+	group.PATCH("/orders/:id_order/finish", client.FinishOrder)
+
+	group.GET("/orders/:id_order/tasks", client.TasksList)
+
+	group.GET("/history", client.HistoryOrder)
 }

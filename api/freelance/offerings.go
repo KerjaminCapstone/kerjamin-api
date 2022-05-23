@@ -335,11 +335,11 @@ func HistoriOffering(c echo.Context) error {
 	db.Model(&model.Order{}).Select(`public.order.id_order as id_order_fr, public.order.id_client, public.order.id_freelance, public.order.created_at as at, 
 				public.job_child_code.job_child_name as job_title, public.client_data.id_user, public.user.name as client_name`).
 		Where(`public.order.id_freelance = ?`, fr.IdFreelance).
+		Where(`public.order.id_status IN ?`, []int{3, 5, 7}). // Selesai dan ditolak
 		Joins(`left join public.client_data on public.client_data.id_client = public.order.id_client`).
 		Joins(`left join public.freelance_data on public.freelance_data.id_freelance = public.order.id_freelance`).
 		Joins(`left join public.user on public.user.id_user = public.client_data.id_user`).
 		Joins(`left join public.job_child_code on public.job_child_code.job_child_code = public.order.job_child_code`).
-		Where(`public.order.id_status IN ?`, []int{3, 5, 7}). // Selesai dan ditolak
 		Scan(&orders)
 	if orders == nil {
 		orders = []schema.OfferingItem{}

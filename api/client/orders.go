@@ -121,7 +121,9 @@ func ConfirmOrder(c echo.Context) error {
 		return gorm.ErrRecordNotFound
 	}
 
+	timeNow := time.Now()
 	order.IdStatus = 6
+	order.StartAt = timeNow
 	db.Save(&order)
 
 	response := static.ResponseCreate{
@@ -150,4 +152,83 @@ func CancelOrder(c echo.Context) error {
 		Message: "Order telah dibatalkan oleh Client",
 	}
 	return c.JSON(http.StatusOK, response)
+}
+
+func FinishOrder(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	timeNow := time.Now()
+	order.IdStatus = 7
+	order.FinishedAt = timeNow
+	db.Save(&order)
+
+	response := static.ResponseCreate{
+		Message: "Order telah diselesaikan oleh Client",
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func TasksList(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	response := static.ResponseSuccess{
+		Data: order.GetTasks(),
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func HistoryOrder(c echo.Context) error {
+	uId, _ := helper.ExtractToken(c)
+	user, err := helper.FindByUId(uId)
+	if err != nil {
+		return err
+	}
+
+	cl, err := user.FindClientAcc()
+	if err != nil {
+		return err
+	}
+
+	db := database.GetDBInstance()
+	var orders []schema.OrderItem
+	db.Model(&model.Order{}).Select(`public.order.created_at, public.job_child_code.job_child_name,
+			public.user.name, public.order_status.status_name`).
+		Where(`public.order.id_client = ?`, cl.IdClient).
+		Where(`public.order.id_status IN ?`, []int{3, 5, 7}).
+		Joins(`left join public.job_child_code on public.job_child_code.job_child_code = public.order.job_child_code`).
+		Joins(`left join public.client_data on public.client_data.id_client = public.order.id_client`).
+		Joins(`left join public.user on public.user.id_user = public.client_data.id_user`).
+		Joins(`left join public.order_status on public.order_status.id_status = public.order.id_status`).
+		Scan(&orders)
+
+	if orders == nil {
+		orders = []schema.OrderItem{}
+	}
+
+	result := &static.ResponseSuccess{
+		Data: orders,
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
