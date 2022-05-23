@@ -34,7 +34,7 @@ func SubmitOrder(c echo.Context) error {
 	}
 	timeNow := time.Now()
 
-	idOd := helper.RandomStr(8)
+	idOd := "OD-" + helper.RandomStr(8)
 	if idOd == "" {
 		return echo.ErrNotFound
 	}
@@ -53,9 +53,8 @@ func SubmitOrder(c echo.Context) error {
 	// yang didapatkan dari api Google Map
 	// Param: longitude latitude, Response: Alamat
 
-	newIdOd := "OD-" + idOd
 	errOrder := db.Create(&model.Order{
-		IdOrder:        newIdOd,
+		IdOrder:        idOd,
 		IdClient:       clientData.IdClient,
 		IdFreelance:    freelanceData.IdFreelance,
 		JobChildCode:   freelanceData.JobChildCode,
@@ -72,11 +71,8 @@ func SubmitOrder(c echo.Context) error {
 		return errOrder
 	}
 
-	data := schema.SubmitOrderRes{
-		IdOrder: newIdOd,
-	}
 	res := static.ResponseSuccess{
-		Data: data,
+		Data: idOd,
 	}
 	return c.JSON(http.StatusCreated, res)
 }
