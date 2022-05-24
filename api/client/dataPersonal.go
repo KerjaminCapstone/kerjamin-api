@@ -6,6 +6,7 @@ import (
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/helper"
+	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,6 +35,10 @@ func DataPersonal(c echo.Context) error {
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
+	res := static.ResponseSuccess{
+		Error: false,
+		Data:  result,
+	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, res)
 }
