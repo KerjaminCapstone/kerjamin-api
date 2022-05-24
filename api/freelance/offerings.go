@@ -45,7 +45,8 @@ func OfferingList(c echo.Context) error {
 	}
 
 	result := &static.ResponseSuccess{
-		Data: orders,
+		Error: false,
+		Data:  orders,
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -94,7 +95,8 @@ func OfferingDetail(c echo.Context) error {
 	biayaInt, _ := strconv.Atoi(order.Biaya)
 	order.Biaya = humanize.Comma(int64(biayaInt))
 	result := &static.ResponseSuccess{
-		Data: order,
+		Error: false,
+		Data:  order,
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -119,6 +121,7 @@ func ConfirmOffering(c echo.Context) error {
 	}
 
 	response := &static.ResponseCreate{
+		Error:   false,
 		Message: "Order berhasil dikonfirmasi oleh Freelancer",
 	}
 
@@ -144,6 +147,7 @@ func RejectOffering(c echo.Context) error {
 	}
 
 	response := &static.ResponseCreate{
+		Error:   false,
 		Message: "Order telah ditolak oleh Freelancer",
 	}
 
@@ -205,6 +209,7 @@ func ArrangeOffering(c echo.Context) error {
 	db.Save(&order)
 
 	response := static.ResponseCreate{
+		Error:   false,
 		Message: "Biaya dan pekerjaan berhasil ditentukan",
 	}
 
@@ -247,7 +252,8 @@ func AddTask(c echo.Context) error {
 	})
 
 	response := static.ResponseSuccess{
-		Data: newOdTask,
+		Error: false,
+		Data:  newOdTask,
 	}
 
 	return c.JSON(http.StatusCreated, response)
@@ -272,6 +278,7 @@ func DeleteTask(c echo.Context) error {
 	}
 
 	response := static.ResponseCreate{
+		Error:   false,
 		Message: "Pekerjaan berhasil dihapus",
 	}
 	return c.JSON(http.StatusOK, response)
@@ -303,7 +310,8 @@ func GetArrangement(c echo.Context) error {
 		Tasks:      order.GetTasks(),
 	}
 	response := static.ResponseSuccess{
-		Data: obj,
+		Error: false,
+		Data:  obj,
 	}
 
 	return c.JSON(http.StatusOK, response)
@@ -328,7 +336,8 @@ func RefreshStatus(c echo.Context) error {
 	}
 
 	response := static.ResponseSuccess{
-		Data: status,
+		Error: false,
+		Data:  status,
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -362,7 +371,8 @@ func HistoriOffering(c echo.Context) error {
 	}
 
 	result := &static.ResponseSuccess{
-		Data: orders,
+		Error: false,
+		Data:  orders,
 	}
 
 	return c.JSON(http.StatusOK, result)

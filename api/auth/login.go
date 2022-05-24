@@ -49,10 +49,15 @@ func Login(c echo.Context) error {
 	t, errJwt := token.SignedString(config.GetSignatureKey())
 
 	if errJwt != nil {
-		return c.JSON(http.StatusOK, "rsp")
+		resError := static.ResponseError{
+			Error:   true,
+			Message: errJwt.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, resError)
 	}
 
 	rsp := static.ResponseToken{
+		Error: false,
 		Token: t,
 	}
 

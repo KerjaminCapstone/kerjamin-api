@@ -55,7 +55,8 @@ func DataFreelance(c echo.Context) error {
 	}
 
 	result := &static.ResponseSuccess{
-		Data: data,
+		Error: false,
+		Data:  data,
 	}
 
 	return c.JSON(http.StatusOK, result)

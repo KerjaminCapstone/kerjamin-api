@@ -46,10 +46,18 @@ func main() {
 			report = echo.NewHTTPError(http.StatusNotFound, "Data tidak ditemukan")
 		} else if errors.Is(err, &static.AuthError{}) {
 			report = echo.NewHTTPError(http.StatusUnauthorized, "User tidak ditemukan")
+		} else if errors.Is(err, echo.ErrInternalServerError) {
+			report = echo.NewHTTPError(http.StatusUnauthorized, "Terdapat kesalahan")
+		} else if errors.Is(err, echo.ErrNotFound) {
+			report = echo.NewHTTPError(http.StatusUnauthorized, "Halaman tidak ditemukan")
 		}
 
 		c.Logger().Error(report)
-		c.JSON(report.Code, report)
+		errObj := static.ResponseError{
+			Error:   true,
+			Message: fmt.Sprintf("%v", report.Message),
+		}
+		c.JSON(report.Code, errObj)
 	}
 
 	port := os.Getenv("PORT")
