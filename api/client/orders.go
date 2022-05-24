@@ -258,7 +258,11 @@ func ReviewOrder(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, err2.Error)
+	msg := static.ResponseCreate{
+		Message: "Review Berhasil",
+	}
+
+	return c.JSON(http.StatusOK, msg)
 }
 
 func ReportViolation(c echo.Context) error {
@@ -283,5 +287,5 @@ func ReportViolation(c echo.Context) error {
 		Message: "Laporan Sukses",
 	}
 
-	return c.JSON(http.StatusOK, msg)
+	return c.JSON(http.StatusCreated, msg)
 }
