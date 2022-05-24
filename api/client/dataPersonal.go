@@ -14,7 +14,7 @@ func DataPersonal(c echo.Context) error {
 		Name        string    `json:"name"`
 		Email       string    `json:"email"`
 		HousePict   string    `json:"house_pict"`
-		PhoneNumber string    `json:"no_wa"`
+		NoWa        string    `json:"no_wa"`
 		Address     string    `json:"address"`
 		AddressLong float64   `json:"address_long"`
 		AddressLat  float64   `json:"address_lat"`
