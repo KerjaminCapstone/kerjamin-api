@@ -100,17 +100,8 @@ func OfferingDetail(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateOffering(c echo.Context) error {
+func ConfirmOffering(c echo.Context) error {
 	idOrder := c.Param("id_order")
-	form := new(schema.UpdateOffering)
-
-	if err := c.Bind(form); err != nil {
-		return err
-	}
-
-	if err := c.Validate(form); err != nil {
-		return err
-	}
 
 	db := database.GetDBInstance()
 	var order model.Order
@@ -122,13 +113,38 @@ func UpdateOffering(c echo.Context) error {
 		return gorm.ErrRecordNotFound
 	}
 
-	order.IdStatus = int64(form.Status)
+	order.IdStatus = 2
 	if err := db.Save(&order).Error; err != nil {
 		return err
 	}
 
 	response := &static.ResponseCreate{
-		Message: "Status order berhasil diperbarui",
+		Message: "Order berhasil dikonfirmasi oleh Freelancer",
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func RejectOffering(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	order.IdStatus = 3
+	if err := db.Save(&order).Error; err != nil {
+		return err
+	}
+
+	response := &static.ResponseCreate{
+		Message: "Order telah ditolak oleh Freelancer",
 	}
 
 	return c.JSON(http.StatusOK, response)
