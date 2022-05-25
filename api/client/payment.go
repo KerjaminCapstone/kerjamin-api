@@ -41,6 +41,7 @@ func OrderPayment(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 	msg := static.ResponseCreate{
+		Error:   false,
 		Message: "Tagihan Terbayar",
 	}
 

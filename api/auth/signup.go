@@ -61,6 +61,7 @@ func SignUp(c echo.Context) error {
 	}
 
 	msg := static.ResponseCreate{
+		Error:   false,
 		Message: "Pengguna berhasil mendaftar",
 	}
 

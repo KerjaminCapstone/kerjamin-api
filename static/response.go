@@ -1,17 +1,21 @@
 package static
 
 type ResponseSuccess struct {
-	Data interface{} `json:"data"`
+	Error bool        `json:"error"`
+	Data  interface{} `json:"data"`
 }
 
 type ResponseCreate struct {
+	Error   bool   `json:"error"`
 	Message string `json:"message"`
 }
 
-type ResponseFail struct {
-	ErrorMessage string
+type ResponseError struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message"`
 }
 
 type ResponseToken struct {
+	Error bool   `json:"error"`
 	Token string `json:"token"`
 }

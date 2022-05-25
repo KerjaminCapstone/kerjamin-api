@@ -35,7 +35,8 @@ func GetProfile(c echo.Context) error {
 	}
 
 	res := static.ResponseSuccess{
-		Data: data,
+		Error: false,
+		Data:  data,
 	}
 
 	return c.JSON(http.StatusOK, res)

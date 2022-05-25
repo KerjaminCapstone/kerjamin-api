@@ -72,7 +72,8 @@ func SubmitOrder(c echo.Context) error {
 	}
 
 	res := static.ResponseSuccess{
-		Data: idOd,
+		Error: false,
+		Data:  idOd,
 	}
 	return c.JSON(http.StatusCreated, res)
 }
@@ -123,6 +124,7 @@ func ConfirmOrder(c echo.Context) error {
 	db.Save(&order)
 
 	response := static.ResponseCreate{
+		Error:   false,
 		Message: "Order berhasil dikonfirmasi. Order akan segera diproses",
 	}
 	return c.JSON(http.StatusOK, response)
@@ -145,6 +147,7 @@ func CancelOrder(c echo.Context) error {
 	db.Save(&order)
 
 	response := static.ResponseCreate{
+		Error:   false,
 		Message: "Order telah dibatalkan oleh Client",
 	}
 	return c.JSON(http.StatusOK, response)
@@ -169,6 +172,7 @@ func FinishOrder(c echo.Context) error {
 	db.Save(&order)
 
 	response := static.ResponseCreate{
+		Error:   false,
 		Message: "Order telah diselesaikan oleh Client",
 	}
 	return c.JSON(http.StatusOK, response)
@@ -188,7 +192,8 @@ func TasksList(c echo.Context) error {
 	}
 
 	response := static.ResponseSuccess{
-		Data: order.GetTasks(),
+		Error: false,
+		Data:  order.GetTasks(),
 	}
 
 	return c.JSON(http.StatusOK, response)
@@ -223,7 +228,8 @@ func HistoryOrder(c echo.Context) error {
 	}
 
 	result := &static.ResponseSuccess{
-		Data: orders,
+		Error: false,
+		Data:  orders,
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -254,6 +260,7 @@ func ReviewOrder(c echo.Context) error {
 	}
 
 	msg := static.ResponseCreate{
+		Error:   false,
 		Message: "Review Berhasil",
 	}
 
@@ -279,6 +286,7 @@ func ReportViolation(c echo.Context) error {
 	}
 
 	msg := static.ResponseCreate{
+		Error:   false,
 		Message: "Laporan Sukses",
 	}
 
