@@ -27,8 +27,7 @@ func SignUp(c echo.Context) error {
 	db := database.GetDBInstance()
 	timeNow := time.Now()
 	newUser := &model.User{
-		IdUser: form.Role + "-" + helper.RandomStr(10),
-		// Username:  form.Username,
+		IdUser:    form.Role + "-" + helper.RandomStr(10),
 		Name:      form.Nama,
 		Email:     form.Email,
 		NoWa:      form.NoWa,
@@ -41,12 +40,10 @@ func SignUp(c echo.Context) error {
 	})
 
 	convertJk, _ := strconv.ParseBool(form.JenisKelamin)
-	// convertDate, _ := time.Parse("2006-01-02", form.TanggalLahir)
 	obj := db.Create(&model.ClientData{
-		IdUser:  newUser.IdUser,
-		Address: form.Alamat,
-		IsMale:  convertJk,
-		// Dob:       convertDate,
+		IdUser:    newUser.IdUser,
+		Address:   form.Alamat,
+		IsMale:    convertJk,
 		Nik:       form.Nik,
 		CreatedAt: timeNow,
 		UpdatedAt: timeNow,
