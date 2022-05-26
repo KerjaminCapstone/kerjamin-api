@@ -16,7 +16,6 @@ type Response struct {
 	JobDone       int       `json:"job_done"`
 	DateJoin      time.Time `json:"date_join"`
 	Jenis_kelamin string    `json:"jenis_kelamin"`
-	Dob           time.Time `json:"dob"`
 	// ProfilePict   string    `json:"profile_pict"`
 	Distance float64 `json:"distance"`
 }
@@ -30,7 +29,7 @@ func ListFreelance(c echo.Context) error {
 	var result []Response
 
 	db := database.GetDBInstance()
-	err := db.Raw(`SELECT fd.date_join, case when cd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin, fd.id_freelance,u."name" , fd.rating , fd.profile_pict  , fd.points , fd.is_trainee,fd.is_male , jcc.job_child_name ,(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
+	err := db.Raw(`SELECT fd.date_join, case when cd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin, fd.id_freelance,u."name" , fd.rating   , fd.points , fd.is_trainee , jcc.job_child_name ,(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance 
 	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u 
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
