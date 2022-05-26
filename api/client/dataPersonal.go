@@ -42,6 +42,7 @@ func DataPersonal(c echo.Context) error {
 
 	db := database.GetDBInstance()
 	err := db.Raw(`select u.email,u.no_wa,u."name"  ,cd.address ,cd.address_long,cd.address_lat ,cd.is_male,cd.nik 
+	from "user" u, client_data cd
 	where u.id_user = cd.id_user and u.id_user=?`, uId).Scan(&result).Error
 	if err != nil {
 		return echo.ErrInternalServerError
