@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,6 +26,15 @@ func SignUp(c echo.Context) error {
 	}
 
 	db := database.GetDBInstance()
+	userExist, _ := helper.FindByEmail(form.Email)
+	if userExist != nil {
+		msg := static.ResponseCreate{
+			Error:   true,
+			Message: "email sudah ada lur",
+		}
+		return c.JSON(http.StatusBadRequest, msg)
+	}
+
 	timeNow := time.Now()
 	newUser := &model.User{
 		IdUser:    form.Role + "-" + helper.RandomStr(10),
@@ -63,4 +73,27 @@ func SignUp(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, msg)
+}
+func TestEndpoint(c echo.Context) error {
+
+	var payload schema.SignUp
+	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
+		return echo.ErrBadRequest
+	}
+	user, _ := helper.FindByEmail(payload.Email)
+
+	if user != nil {
+		msg := static.ResponseCreate{
+			Error:   false,
+			Message: "email sudah ada lur",
+		}
+		return c.JSON(http.StatusOK, msg)
+	}
+
+	msg := static.ResponseCreate{
+		Error:   false,
+		Message: "email belum ada",
+	}
+
+	return c.JSON(http.StatusOK, msg)
 }
