@@ -24,8 +24,6 @@ func SignUp(c echo.Context) error {
 	if err := c.Validate(form); err != nil {
 		return err
 	}
-
-	db := database.GetDBInstance()
 	userExist, _ := helper.FindByEmail(form.Email)
 	if userExist != nil {
 		msg := static.ResponseCreate{
@@ -34,6 +32,8 @@ func SignUp(c echo.Context) error {
 		}
 		return c.JSON(http.StatusBadRequest, msg)
 	}
+
+	db := database.GetDBInstance()
 
 	timeNow := time.Now()
 	newUser := &model.User{
