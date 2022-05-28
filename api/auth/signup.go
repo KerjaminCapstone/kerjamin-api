@@ -28,7 +28,7 @@ func SignUp(c echo.Context) error {
 	if userExist != nil {
 		msg := static.ResponseCreate{
 			Error:   true,
-			Message: "email sudah ada lur",
+			Message: "Email already exist",
 		}
 		return c.JSON(http.StatusBadRequest, msg)
 	}
