@@ -6,6 +6,7 @@ type OfferingDetail struct {
 	ClientName string  `json:"client_name"`
 	Keluhan    string  `json:"keluhan"`
 	NoWaClient string  `json:"no_wa_client"`
+	IdStatus   int     `json:"id_status"`
 	Status     string  `json:"status"`
 	Biaya      string  `json:"biaya"`
 	Komentar   string  `json:"komentar"`
