@@ -72,7 +72,7 @@ func OfferingDetail(c echo.Context) error {
 	res := db.Model(&model.Order{}).Select(`public.order.id_order as id_order_fr, public.order.id_client, public.order.id_freelance, 
 				public.order.job_description as keluhan, public.user.no_wa as no_wa_client, public.order.job_long, public.order.job_lat,
 				public.job_child_code.job_child_name as job_title, public.client_data.id_user, 
-				public.user.name as client_name, public.order_status.status_name as status,
+				public.user.name as client_name, public.order_status.status_name as status, public.order_status.id_status,
 				public.order_payment.value_clean as biaya, public.order_review.commentary as komentar,
 				public.order_review.rating as rating`).
 		Where(`public.order.id_freelance = ?`, fr.IdFreelance).
@@ -323,7 +323,7 @@ func RefreshStatus(c echo.Context) error {
 	db := database.GetDBInstance()
 
 	var status schema.RefreshStatus
-	res := db.Model(&model.Order{}).Select(`public.order.id_status, public.order_status.id_status, public.order_status.status_name`).
+	res := db.Model(&model.Order{}).Select(`public.order.id_status as is, public.order_status.id_status, public.order_status.status_name`).
 		Where(`public.order.id_order = ?`, idOrder).
 		Joins(`left join public.order_status on public.order_status.id_status = public.order.id_status`).
 		Scan(&status)
