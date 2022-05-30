@@ -14,8 +14,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func SignUp(c echo.Context) error {
-	form := new(schema.SignUp)
+func SignUpFr(c echo.Context) error {
+	form := new(schema.SignUpFreelance)
 	if err := c.Bind(form); err != nil {
 		return err
 	}
@@ -24,19 +24,24 @@ func SignUp(c echo.Context) error {
 		return err
 	}
 	userExist, _ := helper.FindByEmail(form.Email)
-	if userExist != nil {
+	freelancerExist, _ := helper.IsFreelancerExist(form.Nik)
+	if userExist != nil || freelancerExist != nil {
 		msg := static.ResponseCreate{
 			Error:   true,
-			Message: "Email already exist",
+			Message: "Pengguna telah terdaftar sebelumnya.",
 		}
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	db := database.GetDBInstance()
 
+	if err := db.First(&model.JobChildCode{}, "job_child_code = ?", form.JobChildCode).Error; err != nil {
+		return err
+	}
+
 	timeNow := time.Now()
 	newUser := &model.User{
-		IdUser:    form.Role + "-" + helper.RandomStr(10),
+		IdUser:    "FR" + "-" + helper.RandomStr(10),
 		Name:      form.Nama,
 		Email:     form.Email,
 		NoWa:      form.NoWa,
@@ -49,15 +54,26 @@ func SignUp(c echo.Context) error {
 	})
 
 	convertJk, _ := strconv.ParseBool(form.JenisKelamin)
-	obj := db.Create(&model.ClientData{
-		IdUser:    newUser.IdUser,
-		Address:   form.Alamat,
-		IsMale:    convertJk,
-		Nik:       form.Nik,
-		CreatedAt: timeNow,
-		UpdatedAt: timeNow,
+	formatParse := "2012-12-30"
+	dobParse, _ := time.Parse(formatParse, form.Dob)
+	obj := db.Create(&model.FreelanceData{
+		IdUser:       newUser.IdUser,
+		IsTrainee:    false,
+		Address:      form.Address,
+		AddressLong:  form.AddressLong,
+		AddressLat:   form.AddressLat,
+		Rating:       0,
+		Points:       0,
+		JobDone:      0,
+		DateJoin:     timeNow,
+		IsMale:       convertJk,
+		Dob:          dobParse,
+		Nik:          form.Nik,
+		JobChildCode: form.JobChildCode,
+		CreatedAt:    timeNow,
+		UpdatedAt:    timeNow,
 	})
-	clientRole, _ := helper.FindRoleByName("client")
+	clientRole, _ := helper.FindRoleByName("freelancer")
 	uR := db.Create(&model.UserRole{
 		IdUser: newUser.IdUser,
 		IdRole: clientRole.IdRole,

@@ -27,6 +27,10 @@ type FreelanceData struct {
 	UpdatedAt    time.Time
 }
 
+func (FreelanceData) TableName() string {
+	return "public.freelance_data"
+}
+
 type KeahlianFreelance struct {
 	Keahlian string
 }

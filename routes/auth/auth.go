@@ -6,8 +6,7 @@ import (
 )
 
 func AuthSubRoute(group *echo.Group) {
-	group.POST("/sign-up", auth.SignUp)
+	group.POST("/sign-up/client", auth.SignUp)
+	group.POST("/sign-up/freelancer", auth.SignUpFr)
 	group.POST("/login", auth.Login)
-	group.POST("/test", auth.TestEndpoint)
-
 }
