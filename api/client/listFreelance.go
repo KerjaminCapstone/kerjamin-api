@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
+	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
 	"github.com/labstack/echo/v4"
 )
 
@@ -56,6 +57,9 @@ func ListFreelance(c echo.Context) error {
 			return echo.ErrInternalServerError
 		}
 	}
-
-	return c.JSON(http.StatusOK, result)
+	res := static.ResponseSuccess{
+		Error: false,
+		Data:  result,
+	}
+	return c.JSON(http.StatusOK, res)
 }
