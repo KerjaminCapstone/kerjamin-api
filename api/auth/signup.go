@@ -24,7 +24,8 @@ func SignUp(c echo.Context) error {
 		return err
 	}
 	userExist, _ := helper.FindByEmail(form.Email)
-	if userExist != nil {
+	freelancerExist, _ := helper.IsFreelancerExist(form.Nik)
+	if userExist != nil || freelancerExist != nil {
 		msg := static.ResponseCreate{
 			Error:   true,
 			Message: "Email already exist",
@@ -36,7 +37,7 @@ func SignUp(c echo.Context) error {
 
 	timeNow := time.Now()
 	newUser := &model.User{
-		IdUser:    form.Role + "-" + helper.RandomStr(10),
+		IdUser:    "CL" + "-" + helper.RandomStr(10),
 		Name:      form.Nama,
 		Email:     form.Email,
 		NoWa:      form.NoWa,

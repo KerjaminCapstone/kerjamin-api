@@ -32,12 +32,13 @@ func OfferingList(c echo.Context) error {
 
 	var orders []schema.OfferingItem
 	db.Model(&model.Order{}).Select(`public.order.id_order as id_order_fr, public.order.id_client, public.order.id_freelance, public.order.created_at as at, 
-				public.job_child_code.job_child_name as job_title, public.client_data.id_user, public.user.name as client_name`).
+				public.job_child_code.job_child_name as job_title, public.client_data.id_user, public.user.name as client_name, public.order_status.id_status`).
 		Where(`public.order.id_freelance = ?`, fr.IdFreelance).
 		Joins(`left join public.client_data on public.client_data.id_client = public.order.id_client`).
 		Joins(`left join public.freelance_data on public.freelance_data.id_freelance = public.order.id_freelance`).
 		Joins(`left join public.user on public.user.id_user = public.client_data.id_user`).
 		Joins(`left join public.job_child_code on public.job_child_code.job_child_code = public.order.job_child_code`).
+		Joins(`left join public.order_status on public.order_status.id_status = public.order.id_status`).
 		Where(`public.order.id_status IN ?`, []int{1, 2, 4, 6}). // Diterima, proses, assigned
 		Scan(&orders)
 	if orders == nil {
