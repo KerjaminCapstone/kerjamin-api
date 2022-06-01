@@ -50,12 +50,14 @@ func SignUp(c echo.Context) error {
 
 	convertJk, _ := strconv.ParseBool(form.JenisKelamin)
 	obj := db.Create(&model.ClientData{
-		IdUser:    newUser.IdUser,
-		Address:   form.Alamat,
-		IsMale:    convertJk,
-		Nik:       form.Nik,
-		CreatedAt: timeNow,
-		UpdatedAt: timeNow,
+		IdUser:      newUser.IdUser,
+		Address:     form.Alamat,
+		IsMale:      convertJk,
+		Nik:         form.Nik,
+		AddressLong: form.Longitude,
+		AddressLat:  form.Latitude,
+		CreatedAt:   timeNow,
+		UpdatedAt:   timeNow,
 	})
 	clientRole, _ := helper.FindRoleByName("client")
 	uR := db.Create(&model.UserRole{
