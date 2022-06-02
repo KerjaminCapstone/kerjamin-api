@@ -21,4 +21,5 @@ func FreelanceSubRoute(group *echo.Group) {
 	group.GET("/history", freelance.HistoriOffering)
 
 	group.GET("/me", freelance.GetProfile)
+	group.PATCH("/me/update-address", freelance.UpdateAddress)
 }

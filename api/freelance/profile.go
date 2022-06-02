@@ -3,6 +3,7 @@ package freelance
 import (
 	"net/http"
 
+	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/helper"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/schema"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/static"
@@ -26,12 +27,19 @@ func GetProfile(c echo.Context) error {
 		return errNlpTag
 	}
 
+	keahlian, errKeahlian := fr.FindFreelanceKeahlian()
+	if errKeahlian != nil {
+		return errKeahlian
+	}
+
 	data := schema.FreelanceProfile{
 		Nama:      user.Name,
 		Email:     user.Email,
 		IdUserNik: user.IdUser + " / " + fr.Nik,
 		NlpTags:   nlpTags,
 		Points:    fr.Points,
+		Keahlian:  keahlian,
+		Alamat:    fr.Address,
 	}
 
 	res := static.ResponseSuccess{
@@ -39,5 +47,42 @@ func GetProfile(c echo.Context) error {
 		Data:  data,
 	}
 
+	return c.JSON(http.StatusOK, res)
+}
+
+func UpdateAddress(c echo.Context) error {
+	uId, _ := helper.ExtractToken(c)
+	user, err := helper.FindByUId(uId)
+	if err != nil {
+		return err
+	}
+
+	fr, errFr := user.FindFreelanceAcc()
+	if errFr != nil {
+		return errFr
+	}
+
+	form := new(schema.ChangeAddress)
+
+	if err := c.Bind(form); err != nil {
+		return err
+	}
+
+	if err := c.Validate(form); err != nil {
+		return err
+	}
+
+	db := database.GetDBInstance()
+	fr.Address = form.Address
+	fr.AddressLat = form.AddressLat
+	fr.AddressLong = form.AddressLong
+	if err = db.Save(&fr).Error; err != nil {
+		return err
+	}
+
+	res := static.ResponseCreate{
+		Error:   false,
+		Message: "Alamat berhasil diganti",
+	}
 	return c.JSON(http.StatusOK, res)
 }
