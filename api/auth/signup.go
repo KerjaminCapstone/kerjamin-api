@@ -32,6 +32,9 @@ func SignUp(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
+	inputLat, _ := strconv.ParseFloat(form.Latitude, 64)
+	inputLong, _ := strconv.ParseFloat(form.Longitude, 64)
+
 	db := database.GetDBInstance()
 
 	timeNow := time.Now()
@@ -54,8 +57,8 @@ func SignUp(c echo.Context) error {
 		Address:     form.Alamat,
 		IsMale:      convertJk,
 		Nik:         form.Nik,
-		AddressLong: form.Longitude,
-		AddressLat:  form.Latitude,
+		AddressLong: inputLat,
+		AddressLat:  inputLong,
 		CreatedAt:   timeNow,
 		UpdatedAt:   timeNow,
 	})

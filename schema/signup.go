@@ -7,10 +7,10 @@ type SignUp struct {
 	Alamat       string `json:"alamat" validate:"required"`
 	JenisKelamin string `json:"jenis_kelamin" validate:"required"`
 	// TanggalLahir string `json:"tanggal_lahir" validate:"required"`
-	NoWa      string  `json:"no_wa" validate:"required"`
-	Email     string  `json:"email" validate:"required"`
-	Password  string  `json:"password" validate:"required"`
-	Role      string  `json:"role" validate:"required"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	NoWa      string `json:"no_wa" validate:"required"`
+	Email     string `json:"email" validate:"required"`
+	Password  string `json:"password" validate:"required"`
+	Role      string `json:"role" validate:"required"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
