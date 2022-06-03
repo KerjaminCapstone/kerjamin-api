@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/helper"
@@ -50,23 +51,23 @@ func DataFreelance(c echo.Context) error {
 		Longitude float64 `json:"address_long"`
 		Latitude  float64 `json:"address_lat"`
 	}
-	var clientLongLat clientCoordinate
+	var clientLongLat model.ClientData
 
 	errClient := db.Raw(`select address_long, address_lat from client_data where id_user=?`, uId).Scan(&clientLongLat).Error
 	if errClient != nil {
 		return echo.ErrInternalServerError
 	}
-
+	fmt.Println(clientLongLat.AddressLong)
+	fmt.Println(clientLongLat.AddressLat)
 	// TEST
 
-	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=` + fmt.Sprintf("%f", clientLongLat.Latitude) + `,` + fmt.Sprintf("%f", clientLongLat.Longitude) + `&destinations=` + fmt.Sprintf("%f", freelanceData.AddressLat) + `,` + fmt.Sprintf("%f", freelanceData.AddressLong) + `&key=AIzaSyAzDa6dzrwku9v_Dfq0YxwQgZVpCSykG7c`
+	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=` + fmt.Sprintf("%f", clientLongLat.AddressLat) + `,` + fmt.Sprintf("%f", clientLongLat.AddressLong) + `&destinations=` + fmt.Sprintf("%f", freelanceData.AddressLat) + `,` + fmt.Sprintf("%f", freelanceData.AddressLong) + `&key=` + os.Getenv("API_KEY")
 
 	var output model.DistanceMatrixResponse
-
+	fmt.Println(url)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(err)
 		return echo.ErrInternalServerError
 	}
 
