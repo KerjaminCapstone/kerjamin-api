@@ -9,4 +9,5 @@ type FreelanceData struct {
 	Alamat       string               `json:"alamat"`
 	JenisKelamin string               `json:"jenis_kelamin"`
 	NlpTag       *model.FreelancerNlp `json:"tag_nlp"`
+	Distance     string               `json:"jarak"`
 }
