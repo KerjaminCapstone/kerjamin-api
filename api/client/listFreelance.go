@@ -19,7 +19,8 @@ type Response struct {
 	DateJoin      time.Time `json:"date_join"`
 	Jenis_kelamin string    `json:"jenis_kelamin"`
 	// ProfilePict   string    `json:"profile_pict"`
-	Distance float64 `json:"distance"`
+	Distance     float64 `json:"distance"`
+	JobChildName string  `json:"job_child_name"`
 }
 
 func ListFreelance(c echo.Context) error {
@@ -35,7 +36,7 @@ func ListFreelance(c echo.Context) error {
 	var queryresult coordinate
 	userID, _ := helper.ExtractToken(c)
 	db := database.GetDBInstance()
-	errClient := db.Raw(`select address_lat as lat, address_long as long from client_data where id_user = ?`, userID).Scan(&queryresult).Error
+	errClient := db.Raw(`select address_lat, address_long from client_data where id_user = ?`, userID).Scan(&queryresult).Error
 	if errClient != nil {
 		return echo.ErrInternalServerError
 	}
