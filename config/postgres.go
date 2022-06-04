@@ -9,11 +9,10 @@ import (
 )
 
 type PostgresCredential struct {
-	DBUsername string
-	DBPassword string
-	DBName     string
-	DBHost     string
-	DBPort     string
+	DBUsername             string
+	DBPassword             string
+	DBName                 string
+	InstanceConnectionName string
 }
 
 func GetPostgresCredential() PostgresCredential {
@@ -24,22 +23,20 @@ func GetPostgresCredential() PostgresCredential {
 	}
 
 	return PostgresCredential{
-		DBUsername: os.Getenv("DB_USERNAME"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_DATABASE"),
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
+		DBUsername:             os.Getenv("DB_USERNAME"),
+		DBPassword:             os.Getenv("DB_PASSWORD"),
+		DBName:                 os.Getenv("DB_DATABASE"),
+		InstanceConnectionName: os.Getenv("INSTANCE_CONNECTION_NAME"),
 	}
 }
 
 func GetPostgresConnectionString() string {
 	credential := GetPostgresCredential()
-	dataBase := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=require",
-		credential.DBHost,
-		credential.DBPort,
+	dataBase := fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?parseTime=true",
 		credential.DBUsername,
-		credential.DBName,
 		credential.DBPassword,
+		credential.InstanceConnectionName,
+		credential.DBName,
 	)
 	return dataBase
 }
