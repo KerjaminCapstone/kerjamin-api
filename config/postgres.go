@@ -26,7 +26,7 @@ func GetPostgresCredential() PostgresCredential {
 		DBUsername:             os.Getenv("DB_USERNAME"),
 		DBPassword:             os.Getenv("DB_PASSWORD"),
 		DBName:                 os.Getenv("DB_DATABASE"),
-		InstanceConnectionName: os.Getenv("INSTANCE_CONNECTION_NAME"),
+		InstanceConnectionName: os.Getenv("CLOUD_SQL_CONNECTION_NAME"),
 	}
 }
 
