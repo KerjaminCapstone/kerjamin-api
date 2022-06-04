@@ -32,11 +32,11 @@ func GetPostgresCredential() PostgresCredential {
 
 func GetPostgresConnectionString() string {
 	credential := GetPostgresCredential()
-	dataBase := fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?parseTime=true",
+	dataBase := fmt.Sprintf("user=%s password=%s database=%s host=/cloudsql/%s",
 		credential.DBUsername,
 		credential.DBPassword,
-		credential.InstanceConnectionName,
 		credential.DBName,
+		credential.InstanceConnectionName,
 	)
 	return dataBase
 }
