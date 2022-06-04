@@ -12,7 +12,7 @@ import (
 
 func TestMapsApi(c echo.Context) error {
 
-	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101,-73.89188969999998&destinations=40.659569,-73.933783&key=AIzaSyAzDa6dzrwku9v_Dfq0YxwQgZVpCSykG7c`
+	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101,-73.89188969999998&destinations=40.659569,-73.933783&key=`
 
 	var output model.DistanceMatrixResponse
 
