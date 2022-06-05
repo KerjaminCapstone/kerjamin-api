@@ -70,6 +70,38 @@ func OfferingDetail(c echo.Context) error {
 	db := database.GetDBInstance()
 
 	var order schema.OfferingDetail
+
+	type ClientFreelanceLatLong struct {
+		ClientLat     float64 `json:"client_lat"`
+		ClientLong    float64 `json:"client_long"`
+		FreelanceLat  float64 `json:"freelance_lat"`
+		FreelanceLong float64 `json:"freelance_long"`
+	}
+	var LatLong ClientFreelanceLatLong
+	errLatLong := db.Raw(`select cd.address_lat client_lat, cd.address_long client_long , fd.address_lat freelance_lat, fd.address_long freelance_long
+	from "order" o, client_data cd , freelance_data fd 
+	where  o.id_client =cd.id_client and o.id_freelance =fd.id_freelance and o.id_order =?`, idOrder).Scan(&LatLong).Error
+	if errLatLong != nil {
+		return echo.ErrInternalServerError
+	}
+	type Response struct {
+		IdOrderFr  string  `json:"id_order"`
+		JobTitle   string  `json:"job_title"`
+		ClientName string  `json:"client_name"`
+		Keluhan    string  `json:"keluhan"`
+		NoWaClient string  `json:"no_wa_client"`
+		IdStatus   int     `json:"id_status"`
+		Status     string  `json:"status"`
+		Biaya      string  `json:"biaya"`
+		Komentar   string  `json:"komentar"`
+		Rating     string  `json:"rating"`
+		JobLong    float64 `json:"longitude"`
+		JobLat     float64 `json:"latitude"`
+		Distance   string  `json:"jarak"`
+	}
+
+	distanceMatrixResponse, _ := helper.CountDistance(LatLong.ClientLat, LatLong.ClientLong, LatLong.FreelanceLat, LatLong.FreelanceLong)
+
 	res := db.Model(&model.Order{}).Select(`public.order.id_order as id_order_fr, public.order.id_client, public.order.id_freelance, 
 				public.order.job_description as keluhan, public.user.no_wa as no_wa_client, public.order.job_long, public.order.job_lat,
 				public.job_child_code.job_child_name as job_title, public.client_data.id_user, 
@@ -95,9 +127,23 @@ func OfferingDetail(c echo.Context) error {
 
 	biayaInt, _ := strconv.Atoi(order.Biaya)
 	order.Biaya = humanize.Comma(int64(biayaInt))
+	var fullResponse Response
+	fullResponse.IdOrderFr = order.IdOrderFr
+	fullResponse.JobTitle = order.JobTitle
+	fullResponse.ClientName = order.ClientName
+	fullResponse.Keluhan = order.Keluhan
+	fullResponse.NoWaClient = order.NoWaClient
+	fullResponse.IdStatus = order.IdStatus
+	fullResponse.Status = order.Status
+	fullResponse.Biaya = order.Biaya
+	fullResponse.Komentar = order.Komentar
+	fullResponse.Rating = order.Rating
+	fullResponse.JobLong = order.JobLong
+	fullResponse.JobLat = order.JobLat
+	fullResponse.Distance = distanceMatrixResponse.Rows[0].Elements[0].Distance.HumanReadable
 	result := &static.ResponseSuccess{
 		Error: false,
-		Data:  order,
+		Data:  fullResponse,
 	}
 
 	return c.JSON(http.StatusOK, result)
