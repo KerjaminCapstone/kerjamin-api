@@ -78,7 +78,7 @@ func OfferingDetail(c echo.Context) error {
 		FreelanceLong float64 `json:"freelance_long"`
 	}
 	var LatLong ClientFreelanceLatLong
-	errLatLong := db.Raw(`select cd.address_lat client_lat, cd.address_long client_long , fd.address_lat freelance_lat, fd.address_long freelance_long
+	errLatLong := db.Raw(`select o.job_lat client_lat, o.job_long client_long , fd.address_lat freelance_lat, fd.address_long freelance_long
 	from "order" o, client_data cd , freelance_data fd 
 	where  o.id_client =cd.id_client and o.id_freelance =fd.id_freelance and o.id_order =?`, idOrder).Scan(&LatLong).Error
 	if errLatLong != nil {
