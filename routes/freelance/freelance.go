@@ -11,6 +11,7 @@ func FreelanceSubRoute(group *echo.Group) {
 	group.PATCH("/offerings/:id_order/confirm", freelance.ConfirmOffering)
 	group.PATCH("/offerings/:id_order/reject", freelance.RejectOffering)
 
+	group.GET("/offerings/:id_order/coordinate-both", freelance.GetCoordinateBoth)
 	group.POST("/offerings/:id_order/arrangement/task", freelance.AddTask)
 	group.DELETE("/offerings/:id_order/arrangement/task/:id_task", freelance.DeleteTask)
 	group.POST("/offerings/:id_order/arrangement", freelance.ArrangeOffering)

@@ -149,6 +149,44 @@ func OfferingDetail(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func GetCoordinateBoth(c echo.Context) error {
+	idOrder := c.Param("id_order")
+
+	db := database.GetDBInstance()
+	var order model.Order
+	res := db.First(&order, "id_order = ?", idOrder)
+	if err := res.Error; err != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	uId, _ := helper.ExtractToken(c)
+	user, err := helper.FindByUId(uId)
+	if err != nil {
+		return err
+	}
+
+	fr, err := user.FindFreelanceAcc()
+	if err != nil {
+		return err
+	}
+
+	data := &schema.CoordinateBoth{
+		FrLong: fr.AddressLong,
+		FrLat:  fr.AddressLat,
+		ClLong: order.JobLong,
+		ClLat:  order.JobLat,
+	}
+	result := &static.ResponseSuccess{
+		Error: false,
+		Data:  data,
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func ConfirmOffering(c echo.Context) error {
 	idOrder := c.Param("id_order")
 
