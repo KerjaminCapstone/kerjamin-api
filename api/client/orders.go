@@ -49,13 +49,28 @@ func SubmitOrder(c echo.Context) error {
 		return err
 	}
 
+	// Nanti disini bakalan ditambahkan api cari address (text)
+	// yang didapatkan dari api Google Map
+	// Param: longitude latitude, Response: Alamat
+
+	type ClientLatLong struct {
+		Latitude  float64 `json:"address_lat"`
+		Longitude float64 `json:"address_long"`
+	}
+
+	var clientCoordinate ClientLatLong
+	errClientCoordinate := db.Raw(`select  cd.address_lat ,cd.address_long  from client_data cd where cd.id_user =?`, uId).Scan(&clientCoordinate).Error
+	if errClientCoordinate != nil {
+		return echo.ErrInternalServerError
+	}
+
 	errOrder := db.Create(&model.Order{
 		IdOrder:        idOd,
 		IdClient:       clientData.IdClient,
 		IdFreelance:    freelanceData.IdFreelance,
 		JobChildCode:   freelanceData.JobChildCode,
-		JobLong:        clientData.AddressLong,
-		JobLat:         clientData.AddressLat,
+		JobLong:        clientCoordinate.Longitude,
+		JobLat:         clientCoordinate.Latitude,
 		JobDescription: form.JobDescription,
 		AlreadyPaid:    false,
 		IdStatus:       1,
