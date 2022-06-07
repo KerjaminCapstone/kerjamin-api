@@ -202,6 +202,13 @@ func TasksList(c echo.Context) error {
 		return gorm.ErrRecordNotFound
 	}
 
+	var frData model.FreelanceData
+	if err := db.Find(&frData, "id_freelance = ?", order.IdFreelance).Error; err != nil {
+		return err
+	}
+	frData.JobDone++
+	db.Save(&frData)
+
 	response := static.ResponseSuccess{
 		Error: false,
 		Data:  order.GetTasks(),
@@ -305,8 +312,21 @@ func ReviewOrder(c echo.Context) error {
 	if err := db.Find(&frData, "id_freelance = ?", order.IdFreelance).Error; err != nil {
 		return err
 	}
-	newRating := (frData.Rating + form.Rating) / 2
-	newPoints := (frData.Points + respNlpApi.Data.RatingModelSum) / 2
+
+	var newRating float64
+	if frData.Rating == 0 {
+		newRating = form.Rating
+	} else {
+		newRating = (frData.Rating + form.Rating) / 2
+	}
+
+	var newPoints float64
+	if frData.Points == 0 {
+		newPoints = respNlpApi.Data.RatingModelSum
+	} else {
+		newPoints = (frData.Points + respNlpApi.Data.RatingModelSum) / 2
+	}
+
 	frData.Rating = newRating
 	frData.Points = newPoints
 	db.Save(&frData)
