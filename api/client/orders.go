@@ -335,6 +335,7 @@ func ReviewOrder(c echo.Context) error {
 	errCreate := db.Create(&model.OrderReview{
 		IdOrder:     idOrder,
 		IdFreelance: order.IdFreelance,
+		Commentary:  form.Commentary,
 		Rating:      form.Rating,
 		NlpScore:    respNlpApi.Data.NlpScore,
 		PointReview: respNlpApi.Data.RatingModelSum,
