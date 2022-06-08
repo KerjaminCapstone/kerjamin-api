@@ -10,7 +10,7 @@ import (
 )
 
 func GetNlpPoints(commentary string, rating float64) (*schema.ParentNlpApiResponse, error) {
-	url := "https://new-prep-dot-kerjadmin.et.r.appspot.com/predict"
+	url := "https://ml-api-4-dot-kerjamin-capstone.et.r.appspot.com/predict"
 
 	insertData := map[string]interface{}{"komentar": "Kerja bagus, tapi kurang ramah", "rating": 4}
 	jsonValue, _ := json.Marshal(insertData)
