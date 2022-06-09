@@ -23,6 +23,10 @@ type Order struct {
 	UpdatedAt      time.Time
 }
 
+func (Order) TableName() string {
+	return "public.order"
+}
+
 func (o *Order) GetPayment() *OrderPayment {
 	db := database.GetDBInstance()
 

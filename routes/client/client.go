@@ -18,7 +18,7 @@ func ClientSubRoute(group *echo.Group) {
 	group.PATCH("/orders/:id_order/cancel", client.CancelOrder)
 	group.PATCH("/orders/:id_order/finish", client.FinishOrder)
 	group.PUT("/orders/payment", client.OrderPayment)
-	group.POST("/orders/review", client.ReviewOrder)
+	group.POST("/orders/:id_order/review", client.ReviewOrder)
 	group.POST("/orders/report", client.ReportViolation)
 
 	group.GET("/orders/:id_order/tasks", client.TasksList)

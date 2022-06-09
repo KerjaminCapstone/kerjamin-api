@@ -202,6 +202,13 @@ func TasksList(c echo.Context) error {
 		return gorm.ErrRecordNotFound
 	}
 
+	var frData model.FreelanceData
+	if err := db.Find(&frData, "id_freelance = ?", order.IdFreelance).Error; err != nil {
+		return err
+	}
+	frData.JobDone++
+	db.Save(&frData)
+
 	response := static.ResponseSuccess{
 		Error: false,
 		Data:  order.GetTasks(),
@@ -246,36 +253,105 @@ func HistoryOrder(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+// func ReviewOrder(c echo.Context) error {
+// 	type review_order struct {
+// 		Id_order   string `json:"id_order"`
+// 		Rating     int    `json:"rating"`
+// 		Commentary string `json:"commentary"`
+// 	}
+// 	var payload review_order
+// 	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
+// 		return echo.ErrBadRequest
+// 	}
+// 	db := database.GetDBInstance()
+// 	var id_freelance string
+
+// 	err := db.Raw(`select id_freelance from "order" where id_order = ?`, payload.Id_order).Scan((&id_freelance)).Error
+// 	if err != nil {
+// 		return echo.ErrInternalServerError
+// 	}
+
+// 	err2 := db.Raw(`insert into order_review(id_order,id_freelance,rating,commentary,created_at,updated_at) values(?,?,?,?,?,?)`,
+// 		payload.Id_order, id_freelance, payload.Rating, payload.Commentary, time.Now(), time.Now())
+// 	if err2.Error != nil {
+// 		return echo.ErrInternalServerError
+// 	}
+
+// 	msg := static.ResponseCreate{
+// 		Error:   false,
+// 		Message: "Review Berhasil",
+// 	}
+
+// 	return c.JSON(http.StatusOK, msg)
+// }
+
 func ReviewOrder(c echo.Context) error {
-	type review_order struct {
-		Id_order   string `json:"id_order"`
-		Rating     int    `json:"rating"`
-		Commentary string `json:"commentary"`
+	idOrder := c.Param("id_order")
+	form := new(schema.ReviewOrder)
+
+	if err := c.Bind(form); err != nil {
+		return err
 	}
-	var payload review_order
-	if err := json.NewDecoder(c.Request().Body).Decode(&payload); err != nil {
-		return echo.ErrBadRequest
+
+	if err := c.Validate(form); err != nil {
+		return err
 	}
+
 	db := database.GetDBInstance()
-	var id_freelance string
-
-	err := db.Raw(`select id_freelance from "order" where id_order = ?`, payload.Id_order).Scan((&id_freelance)).Error
-	if err != nil {
-		return echo.ErrInternalServerError
+	var order model.Order
+	if err := db.Find(&order, "id_order = ?", idOrder).Error; err != nil {
+		return err
 	}
 
-	err2 := db.Raw(`insert into order_review(id_order,id_freelance,rating,commentary,created_at,updated_at) values(?,?,?,?,?,?)`,
-		payload.Id_order, id_freelance, payload.Rating, payload.Commentary, time.Now(), time.Now())
-	if err2.Error != nil {
-		return echo.ErrInternalServerError
+	respNlpApi, errNlpApi := helper.GetNlpPoints(form.Commentary, form.Rating)
+	if errNlpApi != nil {
+		return errNlpApi
+	}
+
+	var frData model.FreelanceData
+	if err := db.Find(&frData, "id_freelance = ?", order.IdFreelance).Error; err != nil {
+		return err
+	}
+
+	var newRating float64
+	if frData.Rating == 0 {
+		newRating = form.Rating
+	} else {
+		newRating = (frData.Rating + form.Rating) / 2
+	}
+
+	var newPoints float64
+	if frData.Points == 0 {
+		newPoints = respNlpApi.Data.RatingModelSum
+	} else {
+		newPoints = (frData.Points + respNlpApi.Data.RatingModelSum) / 2
+	}
+
+	frData.Rating = newRating
+	frData.Points = newPoints
+	db.Save(&frData)
+
+	timeNow := time.Now()
+	errCreate := db.Create(&model.OrderReview{
+		IdOrder:     idOrder,
+		IdFreelance: order.IdFreelance,
+		Commentary:  form.Commentary,
+		Rating:      form.Rating,
+		NlpScore:    respNlpApi.Data.NlpScore,
+		PointReview: respNlpApi.Data.RatingModelSum,
+		CreatedAt:   timeNow,
+		UpdatedAt:   timeNow,
+	}).Error
+
+	if errCreate != nil {
+		return errCreate
 	}
 
 	msg := static.ResponseCreate{
 		Error:   false,
-		Message: "Review Berhasil",
+		Message: "Review berhasil",
 	}
-
-	return c.JSON(http.StatusOK, msg)
+	return c.JSON(http.StatusCreated, msg)
 }
 
 func ReportViolation(c echo.Context) error {
