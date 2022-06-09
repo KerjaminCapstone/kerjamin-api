@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"sort"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/schema"
 	"github.com/labstack/echo/v4"
@@ -33,4 +34,50 @@ func GetNlpPoints(commentary string, rating float64) (*schema.ParentNlpApiRespon
 	json.NewDecoder(resp.Body).Decode(&res)
 
 	return &res, nil
+}
+
+func GetNlpTag(idFr int) ([]schema.NlpTagResp, error) {
+	url := "https://word-cloud-api-dot-kerjamin-capstone.et.r.appspot.com/predict"
+
+	insertData := map[string]interface{}{"id": idFr}
+	jsonValue, _ := json.Marshal(insertData)
+
+	req, errForm := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
+	req.Header.Set("Content-Type", "application/json")
+
+	if errForm != nil {
+		return nil, errForm
+	}
+
+	client := &http.Client{}
+	resp, errReq := client.Do(req)
+
+	if errReq != nil {
+		return nil, errReq
+	}
+	if resp.StatusCode != 200 {
+		return nil, errReq
+	}
+
+	var res interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+
+	extractBody := res.(map[string]interface{})
+	data := extractBody["data"].([]interface{})
+	var resStruct []schema.NlpTagResp
+	for _, d := range data {
+		sifatItem := d.(map[string]interface{})["sifat"].(string)
+		valueItem := d.(map[string]interface{})["value"].(float64)
+		item := schema.NlpTagResp{
+			Sifat: sifatItem,
+			Value: valueItem,
+		}
+		resStruct = append(resStruct, item)
+	}
+
+	sort.Slice(resStruct, func(i, j int) bool {
+		return resStruct[i].Value > resStruct[j].Value
+	})
+
+	return resStruct, nil
 }

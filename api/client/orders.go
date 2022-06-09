@@ -327,6 +327,49 @@ func ReviewOrder(c echo.Context) error {
 		newPoints = (frData.Points + respNlpApi.Data.RatingModelSum) / 2
 	}
 
+	var respNlpTag []schema.NlpTagResp
+	respNlpTag, errNlpTag := helper.GetNlpTag(frData.IdFreelance)
+	if errNlpTag != nil {
+		return errNlpTag
+	}
+	countTag := len(respNlpTag)
+	var newNlpTag model.FreelancerNlp
+	newNlpTag.IdFreelance = frData.IdFreelance
+	switch countTag {
+	case 1:
+		newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+	case 2:
+		newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+		newNlpTag.NlpTag2 = respNlpTag[1].Sifat
+	case 3:
+		newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+		newNlpTag.NlpTag2 = respNlpTag[1].Sifat
+		newNlpTag.NlpTag3 = respNlpTag[2].Sifat
+	case 4:
+		newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+		newNlpTag.NlpTag2 = respNlpTag[1].Sifat
+		newNlpTag.NlpTag3 = respNlpTag[2].Sifat
+		newNlpTag.NlpTag4 = respNlpTag[3].Sifat
+	case 5:
+		newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+		newNlpTag.NlpTag2 = respNlpTag[1].Sifat
+		newNlpTag.NlpTag3 = respNlpTag[2].Sifat
+		newNlpTag.NlpTag4 = respNlpTag[3].Sifat
+		newNlpTag.NlpTag5 = respNlpTag[4].Sifat
+	}
+
+	var testFindNlp model.FreelancerNlp
+	if db.Model(&model.FreelancerNlp{}).Where("id_freelance = ?", frData.IdFreelance).Find(&testFindNlp).RowsAffected == 0 {
+		db.Create(&newNlpTag)
+	} else {
+		testFindNlp.NlpTag1 = newNlpTag.NlpTag1
+		testFindNlp.NlpTag2 = newNlpTag.NlpTag2
+		testFindNlp.NlpTag3 = newNlpTag.NlpTag3
+		testFindNlp.NlpTag4 = newNlpTag.NlpTag4
+		testFindNlp.NlpTag5 = newNlpTag.NlpTag5
+		db.Save(&testFindNlp)
+	}
+
 	frData.Rating = newRating
 	frData.Points = newPoints
 	db.Save(&frData)
