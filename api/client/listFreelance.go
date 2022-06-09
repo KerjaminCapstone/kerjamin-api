@@ -114,7 +114,7 @@ func ListFreelance(c echo.Context) error {
 
 	res := static.ResponseSuccess{
 		Error: false,
-		Data:  resultJson,
+		Data:  output,
 	}
 	return c.JSON(http.StatusOK, res)
 }
