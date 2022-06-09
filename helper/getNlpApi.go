@@ -79,5 +79,14 @@ func GetNlpTag(idFr int) ([]schema.NlpTagResp, error) {
 		return resStruct[i].Value > resStruct[j].Value
 	})
 
+	lenMin := 5 - len(resStruct)
+	for i := 0; i < lenMin; i++ {
+		emptyItem := schema.NlpTagResp{
+			Sifat: "",
+			Value: 0,
+		}
+		resStruct = append(resStruct, emptyItem)
+	}
+
 	return resStruct, nil
 }
