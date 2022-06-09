@@ -29,6 +29,8 @@ type Response struct {
 	AddressLat        float64   `json:"address_lat"`
 	AddressLong       float64   `json:"address_long"`
 	Distance          string    `json:"distance"`
+	JobCode           string    `json:"job_code"`
+	JobChildCode      string    `json:"job_child_code"`
 }
 
 func ListFreelance(c echo.Context) error {
@@ -49,7 +51,7 @@ func ListFreelance(c echo.Context) error {
 	}
 	// sort_by 1 / 2/ 3 /4
 	// 1 == by
-	err := db.Raw(`SELECT fd.id_freelance, u."name",fd.is_trainee,fd.rating,fd.job_done, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
+	err := db.Raw(`SELECT fd.id_freelance, u."name",fd.is_trainee,fd.rating,fd.job_done,fd.job_child_code,jc.job_code, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
 	 (6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance_haversign,
 	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long 
@@ -57,7 +59,7 @@ func ListFreelance(c echo.Context) error {
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
-	order by distance_haversign desc, fd.rating desc`, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result)
+	order by distance_haversign asc, fd.rating desc`, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result)
 	if err.Error != nil {
 		return echo.ErrInternalServerError
 	}
