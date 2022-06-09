@@ -50,14 +50,12 @@ func ListFreelance(c echo.Context) error {
 	// 1 == by distance || 2== by rating
 
 	err := db.Raw(`SELECT fd.date_join,fd.job_done, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
-	fd.id_freelance,u."name" , fd.rating   , fd.points , fd.is_trainee , jcc.job_child_name , fd.address as alamat, fd.address_lat ,fd.address_long 
-	,(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
-	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance 
+	fd.id_freelance,u."name" , fd.rating   , fd.points , fd.is_trainee , jcc.job_child_name , fd.address as alamat, fd.address_lat ,fd.address_long
 	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u 
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
-	order by distance asc, fd.rating desc`, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result).Error
+	order by distance asc, fd.rating desc`, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result).Error
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
