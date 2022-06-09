@@ -16,18 +16,19 @@ import (
 )
 
 type Response struct {
-	IdFreelance   int       `json:"id_freelance"`
-	Name          string    `json:"name"`
-	IsTrainee     bool      `json:"is_trainee"`
-	Rating        float64   `json:"rating"`
-	JobDone       int       `json:"job_done"`
-	DateJoin      time.Time `json:"date_join"`
-	Jenis_kelamin string    `json:"jenis_kelamin"`
-	Distance      string    `json:"distance"`
-	JobChildName  string    `json:"job_child_name"`
-	Address       string    `json:"alamat"`
-	Latitude      float64   `json:"address_lat"`
-	Longitude     float64   `json:"address_long"`
+	IdFreelance       int       `json:"id_freelance"`
+	Name              string    `json:"name"`
+	IsTrainee         bool      `json:"is_trainee"`
+	Rating            float64   `json:"rating"`
+	JobDone           int       `json:"job_done"`
+	DateJoin          time.Time `json:"date_join"`
+	Jenis_kelamin     string    `json:"jenis_kelamin"`
+	DistanceHaversign float64   `json:"distance_haversign"`
+	JobChildName      string    `json:"job_child_name"`
+	Address           string    `json:"address"`
+	AddressLat        float64   `json:"address_lat"`
+	AddressLong       float64   `json:"address_long"`
+	Distance          string    `json:"distance"`
 }
 
 func ListFreelance(c echo.Context) error {
@@ -47,16 +48,17 @@ func ListFreelance(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 	// sort_by 1 / 2/ 3 /4
-	// 1 == by distance || 2== by rating
-
-	err := db.Raw(`SELECT fd.date_join,fd.job_done, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
-	fd.id_freelance,u."name" , fd.rating   , fd.points , fd.is_trainee , jcc.job_child_name , fd.address as alamat, fd.address_lat ,fd.address_long
+	// 1 == by
+	err := db.Raw(`SELECT fd.id_freelance, u."name",fd.is_trainee,fd.rating,fd.job_done, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
+	 (6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
+	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance_haversign,
+	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long 
 	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u 
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
-	order by distance asc, fd.rating desc`, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result).Error
-	if err != nil {
+	order by distance_haversign desc, fd.rating desc`, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result)
+	if err.Error != nil {
 		return echo.ErrInternalServerError
 	}
 
@@ -65,37 +67,36 @@ func ListFreelance(c echo.Context) error {
 
 	for i, data := range result {
 		if i == 0 {
-			url = url + fmt.Sprintf("%f", data.Latitude) + `,` + fmt.Sprintf("%f", data.Longitude)
+			url = url + fmt.Sprintf("%f", data.AddressLat) + `,` + fmt.Sprintf("%f", data.AddressLong)
 		} else {
-			url = url + `%7C` + fmt.Sprintf("%f", data.Latitude) + `,` + fmt.Sprintf("%f", data.Longitude)
+			url = url + `%7C` + fmt.Sprintf("%f", data.AddressLat) + `,` + fmt.Sprintf("%f", data.AddressLong)
 		}
 	}
 	url += api_key
 
-	// akses gmaps distance api
+	// // akses gmaps distance api
 	var output model.DistanceMatrixResponse
 	fmt.Println(url)
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return err
+	req, erraaaa := http.NewRequest("GET", url, nil)
+	if erraaaa != nil {
+		fmt.Println(erraaaa)
 	}
-	resMaps, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return err
+	resMaps, erraaaa := client.Do(req)
+	if erraaaa != nil {
+		fmt.Println(erraaaa)
 	}
 	defer resMaps.Body.Close()
 
-	body, err := ioutil.ReadAll(resMaps.Body)
-	if err != nil {
-		fmt.Println(err)
-		return err
+	body, erraaaa := ioutil.ReadAll(resMaps.Body)
+	if erraaaa != nil {
+		fmt.Println(erraaaa)
+		return erraaaa
 	}
 
 	jsonErr := json.Unmarshal(body, &output)
 	if jsonErr != nil {
-		return err
+		return jsonErr
 	}
 	//
 
@@ -112,7 +113,7 @@ func ListFreelance(c echo.Context) error {
 
 	res := static.ResponseSuccess{
 		Error: false,
-		Data:  url,
+		Data:  resultJson,
 	}
 	return c.JSON(http.StatusOK, res)
 }
