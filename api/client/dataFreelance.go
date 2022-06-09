@@ -51,17 +51,16 @@ func DataFreelance(c echo.Context) error {
 		Longitude float64 `json:"address_long"`
 		Latitude  float64 `json:"address_lat"`
 	}
-	var clientLongLat model.ClientData
+	var clientLongLat clientCoordinate
 
 	errClient := db.Raw(`select address_long, address_lat from client_data where id_user=?`, uId).Scan(&clientLongLat).Error
 	if errClient != nil {
 		return echo.ErrInternalServerError
 	}
-	fmt.Println(clientLongLat.AddressLong)
-	fmt.Println(clientLongLat.AddressLat)
+
 	// TEST
 
-	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=` + fmt.Sprintf("%f", clientLongLat.AddressLat) + `,` + fmt.Sprintf("%f", clientLongLat.AddressLong) + `&destinations=` + fmt.Sprintf("%f", freelanceData.AddressLat) + `,` + fmt.Sprintf("%f", freelanceData.AddressLong) + `&key=` + os.Getenv("API_KEY")
+	url := `https://maps.googleapis.com/maps/api/distancematrix/json?origins=` + fmt.Sprintf("%f", clientLongLat.Latitude) + `,` + fmt.Sprintf("%f", clientLongLat.Longitude) + `&destinations=` + fmt.Sprintf("%f", freelanceData.AddressLat) + `,` + fmt.Sprintf("%f", freelanceData.AddressLong) + `&key=` + os.Getenv("API_KEY")
 
 	var output model.DistanceMatrixResponse
 	fmt.Println(url)
