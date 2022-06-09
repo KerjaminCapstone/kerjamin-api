@@ -327,6 +327,25 @@ func ReviewOrder(c echo.Context) error {
 		newPoints = (frData.Points + respNlpApi.Data.RatingModelSum) / 2
 	}
 
+	respNlpTag, errNlpTag := helper.GetNlpTag(frData.IdFreelance)
+	if errNlpTag != nil {
+		return errNlpTag
+	}
+
+	var newNlpTag model.FreelancerNlp
+	newNlpTag.NlpTag1 = respNlpTag[0].Sifat
+	newNlpTag.NlpTag2 = respNlpTag[1].Sifat
+	newNlpTag.NlpTag3 = respNlpTag[2].Sifat
+	newNlpTag.NlpTag4 = respNlpTag[3].Sifat
+	newNlpTag.NlpTag5 = respNlpTag[4].Sifat
+
+	var searchNlpTag model.FreelancerNlp
+	updatedRow := db.Model(&searchNlpTag).Where("id_freelance = ?", frData.IdFreelance).Updates(newNlpTag).RowsAffected
+	if updatedRow == 0 {
+		newNlpTag.IdFreelance = frData.IdFreelance
+		db.Create(&newNlpTag)
+	}
+
 	frData.Rating = newRating
 	frData.Points = newPoints
 	db.Save(&frData)
