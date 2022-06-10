@@ -31,6 +31,11 @@ type Response struct {
 	Distance          string    `json:"distance"`
 	JobCode           string    `json:"job_code"`
 	JobChildCode      string    `json:"job_child_code"`
+	NlpTag1           string    `json:"nlp_tag1"`
+	NlpTag2           string    `json:"nlp_tag2"`
+	NlpTag3           string    `json:"nlp_tag3"`
+	NlpTag4           string    `json:"nlp_tag4"`
+	NlpTag5           string    `json:"nlp_tag5"`
 }
 
 func ListFreelance(c echo.Context) error {
@@ -54,8 +59,8 @@ func ListFreelance(c echo.Context) error {
 	err := db.Raw(`SELECT fd.id_freelance, u."name",fd.is_trainee,fd.rating,fd.job_done,fd.job_child_code,jc.job_code, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
 	 (6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance_haversign,
-	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long 
-	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u 
+	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long , fn.nlp_tag1, fn.nlp_tag2,fn.nlp_tag3,fn.nlp_tag4,fn.nlp_tag5
+	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u , freelance_nlp fn
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
