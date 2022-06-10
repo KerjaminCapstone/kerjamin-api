@@ -60,7 +60,7 @@ func ListFreelance(c echo.Context) error {
 	 (6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance_haversign,
 	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long , fn.nlp_tag1, fn.nlp_tag2,fn.nlp_tag3,fn.nlp_tag4,fn.nlp_tag5
-	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u , freelance_nlp fn
+	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u , freelancer_nlp fn
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
