@@ -59,11 +59,24 @@ func ListFreelance(c echo.Context) error {
 	err := db.Raw(`SELECT fd.id_freelance, u."name",fd.is_trainee,fd.rating,fd.job_done,fd.job_child_code,jc.job_code, case when fd.is_male = true then 'Pria' else 'Wanita' end as jenis_kelamin,
 	 (6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
 	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) as distance_haversign,
-	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long , fn.nlp_tag1, fn.nlp_tag2,fn.nlp_tag3,fn.nlp_tag4,fn.nlp_tag5
+	jcc.job_child_name,fd.address,fd.address_lat,fd.address_long , (select fn.nlp_tag1 where fn.id_freelance =fd.id_freelance 
+        ),(
+        select fn.nlp_tag2
+        where fn.id_freelance =fd.id_freelance 
+        ), (
+        select fn.nlp_tag3
+        where fn.id_freelance =fd.id_freelance 
+        ),(
+        select fn.nlp_tag4
+        where fn.id_freelance =fd.id_freelance 
+        ),(
+        select fn.nlp_tag5
+        where fn.id_freelance =fd.id_freelance 
+        )
 	from freelance_data fd, job_child_code jcc ,job_code jc  , "user" u , freelancer_nlp fn
 	where jcc.job_code  = jc.job_code and fd.job_child_code =jcc.job_child_code and u.id_user = fd.id_user and jc.job_code=? and
 	(6371 * acos( cos( radians(fd.address_lat) ) * cos( radians( ? ) ) *cos( radians( ? ) - radians(fd.address_long) ) 
-	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10
+	+ sin( radians(fd.address_lat) ) * sin( radians( ? ) )) ) <10 
 	order by distance_haversign asc, fd.rating desc`, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat, job_code, clientLatLong.AddressLat, clientLatLong.AddressLong, clientLatLong.AddressLat).Scan(&result)
 	if err.Error != nil {
 		return echo.ErrInternalServerError
