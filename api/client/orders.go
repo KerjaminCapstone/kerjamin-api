@@ -385,8 +385,10 @@ func ReportViolation(c echo.Context) error {
 	}
 	db := database.GetDBInstance()
 
+	userId, _ := helper.ExtractToken(c)
+
 	err := db.Raw(`insert into report_violation(id_order,created_by,title,desc,report_status,created_at,updated_at)
-	values(?,"client",?,?,1,?,?)`, payload.Id_order, payload.Title, payload.Desc, time.Now(), time.Now()).Error
+	values(?,?,?,?,1,?,?)`, payload.Id_order, userId, payload.Title, payload.Desc, time.Now(), time.Now()).Error
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
