@@ -1,12 +1,1057 @@
-consumes:
-- application/json
-info:
-  description: Backend for kerjamin Android app
-  title: Kerjamin Api
-  version: 1.0.0
-paths: {}
-produces:
-- application/json
-schemes:
-- http
-swagger: "2.0"
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Kerjamin",
+    "contact": {}
+  },
+  "host": "kerjamin-api-ko6izzknpq-et.a.run.app",
+  "basePath": "/api",
+  "securityDefinitions": {},
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login Freelancer and Client",
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "LoginFreelancer",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "default": "Bearer {token}",
+            "type": "string"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/LoginFreelancerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/auth/sign-up/client": {
+      "post": {
+        "summary": "Sign-Up Client",
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "Sign-UpClient",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "default": "Bearer {token}",
+            "type": "string"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Sign-UpClientRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/client/me": {
+      "get": {
+        "summary": "Client Data (Self Data)",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "ClientData(SelfData)",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/search/freelance/SE": {
+      "get": {
+        "summary": "Freelancer Data",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "FreelancerData",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/payment/method": {
+      "get": {
+        "summary": "Payment Method",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "PaymentMethod",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/ODGMRiPa9I": {
+      "get": {
+        "summary": "Details Orders",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "DetailsOrders",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/ODGMRiPa9I/tasks": {
+      "get": {
+        "summary": "Tasks List",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "TasksList",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/history": {
+      "get": {
+        "summary": "History Orders",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "HistoryOrders",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/report": {
+      "post": {
+        "summary": "Report Violation",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "ReportViolation",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ReportViolationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/freelance/2/order": {
+      "post": {
+        "summary": "Submit Order",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "SubmitOrder",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SubmitOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/OD-zIYbPSnX/cancel": {
+      "patch": {
+        "summary": "Cancel Order",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "CancelOrder",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CancelOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/OD-zIYbPSnX/confirm": {
+      "patch": {
+        "summary": "Confirm Order",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "ConfirmOrder",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/OD-zIYbPSnX/finish": {
+      "patch": {
+        "summary": "Finish Order",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "FinishOrder",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/client/orders/payment": {
+      "put": {
+        "summary": "Order Payment",
+        "tags": [
+          "Client"
+        ],
+        "operationId": "OrderPayment",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrderPaymentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings": {
+      "get": {
+        "summary": "Offering List",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "OfferingList",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/history": {
+      "get": {
+        "summary": "Offering History",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "OfferingHistory",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/me": {
+      "get": {
+        "summary": "Freelance Data ( Self Data )",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "FreelanceData(SelfData)",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/me/update-address": {
+      "patch": {
+        "summary": "Update Address",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "UpdateAddress",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpdateAddressRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR": {
+      "get": {
+        "summary": "Offering Detail",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "OfferingDetail",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/coordinate-both": {
+      "get": {
+        "summary": "Get Coordinate",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "GetCoordinate",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/status": {
+      "get": {
+        "summary": "Refresh Status",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "RefreshStatus",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/arrangement": {
+      "get": {
+        "summary": "Get Arrangement",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "GetArrangement",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Arrange Offering",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "ArrangeOffering",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ArrangeOfferingRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/arrangement/task/5": {
+      "delete": {
+        "summary": "Delete Task",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "DeleteTask",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/arrangement/task": {
+      "post": {
+        "summary": "Add Task",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "AddTask",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AddTaskRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/confirm": {
+      "patch": {
+        "summary": "Confirm Offering",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "ConfirmOffering",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/freelancer/offerings/ODxt5XBqiR/reject": {
+      "patch": {
+        "summary": "Reject Offering",
+        "tags": [
+          "Freelancer"
+        ],
+        "operationId": "RejectOffering",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "LoginFreelancerRequest": {
+      "title": "LoginFreelancerRequest",
+      "example": {
+        "email": "tasdik.hidayanto@yahoo.co.id",
+        "password": "password",
+        "role": "freelancer"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "role"
+      ]
+    },
+    "LoginClientRequest": {
+      "title": "LoginClientRequest",
+      "example": {
+        "email": "hasanah.rini@gmail.co.id",
+        "password": "password",
+        "role": "client"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "role"
+      ]
+    },
+    "Sign-UpClientRequest": {
+      "title": "Sign-UpClientRequest",
+      "example": {
+        "nik": "123456789",
+        "nama": "Kerjamin-user",
+        "alamat": "Jalan kemana saja, Indonesia",
+        "jenis_kelamin": "Pria",
+        "no_wa": "0123456789",
+        "email": "emailBelumAda@gmail.com",
+        "password": "password",
+        "role": "CL",
+        "latitude": "3.1549872",
+        "longitude": "-5.1248"
+      },
+      "type": "object",
+      "properties": {
+        "nik": {
+          "type": "string"
+        },
+        "nama": {
+          "type": "string"
+        },
+        "alamat": {
+          "type": "string"
+        },
+        "jenis_kelamin": {
+          "type": "string"
+        },
+        "no_wa": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nik",
+        "nama",
+        "alamat",
+        "jenis_kelamin",
+        "no_wa",
+        "email",
+        "password",
+        "role",
+        "latitude",
+        "longitude"
+      ]
+    },
+    "ReportViolationRequest": {
+      "title": "ReportViolationRequest",
+      "example": {
+        "id_order": "ODJuI7B5gv",
+        "title": "FREELANCER MELAKUKAN PENCURIAN",
+        "desc": "PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA BARANG BERHARGA SAYA"
+      },
+      "type": "object",
+      "properties": {
+        "id_order": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_order",
+        "title",
+        "desc"
+      ]
+    },
+    "SubmitOrderRequest": {
+      "title": "SubmitOrderRequest",
+      "example": {
+        "job_description": "hubla"
+      },
+      "type": "object",
+      "properties": {
+        "job_description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_description"
+      ]
+    },
+    "CancelOrderRequest": {
+      "title": "CancelOrderRequest",
+      "example": {
+        "id_order": "ODJuI7B5gv",
+        "title": "FREELANCER MELAKUKAN PENCURIAN",
+        "desc": "PADA SAAT SAYA PERGI KELUAR FREELANCER TIBA TIBA HILANG MEMBAWA BARANG BERHARGA SAYA"
+      },
+      "type": "object",
+      "properties": {
+        "id_order": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_order",
+        "title",
+        "desc"
+      ]
+    },
+    "OrderPaymentRequest": {
+      "title": "OrderPaymentRequest",
+      "example": {
+        "id_method": 1,
+        "id_order": "OD-zIYbPSnX"
+      },
+      "type": "object",
+      "properties": {
+        "id_method": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "id_order": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_method",
+        "id_order"
+      ]
+    },
+    "UpdateAddressRequest": {
+      "title": "UpdateAddressRequest",
+      "example": {
+        "address": "Dimana mana hatiku senang",
+        "address_long": 103.1548956,
+        "address_lat": 25.12845
+      },
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "address_long": {
+          "type": "number",
+          "format": "double"
+        },
+        "address_lat": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "required": [
+        "address",
+        "address_long",
+        "address_lat"
+      ]
+    },
+    "ArrangeOfferingRequest": {
+      "title": "ArrangeOfferingRequest",
+      "example": {
+        "biaya": 250000
+      },
+      "type": "object",
+      "properties": {
+        "biaya": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "biaya"
+      ]
+    },
+    "AddTaskRequest": {
+      "title": "AddTaskRequest",
+      "example": {
+        "task": "Membangun atap rumah"
+      },
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "task"
+      ]
+    }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Client"
+    },
+    {
+      "name": "Freelancer"
+    }
+  ]
+}
