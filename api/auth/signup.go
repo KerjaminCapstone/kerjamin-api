@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/KerjaminCapstone/kerjamin-backend-v1/database"
@@ -52,11 +53,18 @@ func SignUp(c echo.Context) error {
 		return nil
 	})
 
-	convertJk, _ := strconv.ParseBool(form.JenisKelamin)
+	valJenisKelamin := strings.ToLower(form.JenisKelamin)
+	var isMale = false
+	if valJenisKelamin == "pria" || valJenisKelamin == "laki-laki" || valJenisKelamin == "laki laki" || valJenisKelamin == "cowo" || valJenisKelamin == "cowok" || valJenisKelamin == "male" || valJenisKelamin == "jantan" {
+		isMale = true
+	} else if valJenisKelamin == "cewe" || valJenisKelamin == "cewek" || valJenisKelamin == "perempuan" || valJenisKelamin == "wanita" || valJenisKelamin == "betina" || valJenisKelamin == "female" {
+		isMale = false
+	}
+
 	obj := db.Create(&model.ClientData{
 		IdUser:      newUser.IdUser,
 		Address:     form.Alamat,
-		IsMale:      convertJk,
+		IsMale:      isMale,
 		Nik:         form.Nik,
 		AddressLong: inputLat,
 		AddressLat:  inputLong,
